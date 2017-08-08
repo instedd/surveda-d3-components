@@ -1,21 +1,22 @@
 import React, { Component } from 'react';
-import Chart from './Chart'
-import './App.css';
+import SuccessRate from './SuccessRate'
 
 class App extends Component {
 
   constructor() {
     super()
     this.state = {
-      height: 500,
-      values: Array.from({length: 20}, () => Math.floor(Math.random() * 200))
+      value:0.14,
+      width:660,
+      height:330
     }
   }
 
   onClick(x) {
     this.setState({
-      height: this.state.height + x,
-      values: Array.from({length: 20}, () => Math.floor(Math.random() * 200))
+      value:Math.random(),
+      width:this.state.width+x,
+      height:this.state.height+x
     })
   }
 
@@ -23,10 +24,10 @@ class App extends Component {
     return (
       <div className="App">
         <button onClick={() => this.onClick(0)}>Shuffle</button>
-        <button onClick={() => this.onClick(30)}>Expand</button>
-        <button onClick={() => this.onClick(-30)}>Shrink</button>
+        <button onClick={() => this.onClick(12)}>Expand</button>
+        <button onClick={() => this.onClick(-12)}>Shrink</button>
         <p>
-          <Chart values={this.state.values} height={this.state.height} width={1283} />
+          <SuccessRate initial={0.012} actual={0.05} estimated={0.017} progress={this.state.value} width={this.state.width} height={this.state.height} weight={24}/>
         </p>
       </div>
     );

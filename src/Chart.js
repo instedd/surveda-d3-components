@@ -4,42 +4,7 @@ import * as d3 from 'd3'
 const margin = {top: 20, right: 70, bottom: 70, left: 30}
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-class Chart extends Component {
-  constructor(props) {
-    super()
-    this.x = d3.scaleBand()
-    this.y = d3.scaleLinear()
-
-    this.state = this.calculateChartSize(props)
-    this.setAxisDomains(props)
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.width !== nextProps.width || this.props.height !== nextProps.height) {
-      this.setState(this.calculateChartSize(nextProps))
-    }
-
-    if (this.props.values !== nextProps.values) {
-      this.setAxisDomains(nextProps)
-    }
-  }
-
-  calculateChartSize(props) {
-    const { width, height } = props
-    const chartWidth = width - margin.left - margin.right
-    const chartHeight = height - margin.top - margin.bottom
-
-    this.x.range([0, chartWidth]).paddingInner(0.25).round(true)
-    this.y.range([chartHeight, 0])
-
-    return { chartWidth, chartHeight }
-  }
-
-  setAxisDomains(props) {
-    const { values } = props
-    this.x.domain(d3.range(values.length))
-    this.y.domain([0, d3.max(values)])
-  }
+class Donut extends Component {
 
   componentDidMount() {
     this.d3Render(true)
@@ -50,9 +15,15 @@ class Chart extends Component {
   }
 
   d3Render(initial = false) {
-    const { values } = this.props
-    const { chartWidth, chartHeight } = this.state
-    const { x, y } = this
+    const { width, height, values } = this.props
+    const chartWidth = width - margin.left - margin.right
+    const chartHeight = height - margin.top - margin.bottom
+    const x = d3.scaleBand()
+                .domain(d3.range(values.length))
+                .range([0, chartWidth]).paddingInner(0.25).round(true)
+    const y = d3.scaleLinear()
+                .domain([0, d3.max(values)])
+                .range([chartHeight, 0])
     const transitionDuration = initial ? 0 : 250
 
     const bars = d3.select(this.refs.barsContainer).selectAll(".bar").data(values)
@@ -110,4 +81,4 @@ class Chart extends Component {
 }
 
 
-export default Chart
+export default Donut

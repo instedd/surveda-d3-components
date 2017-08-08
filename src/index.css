@@ -1,35 +1,33 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
 body {
   margin:0;
   font-size: 10px;
-  font-family: sans-serif;
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  opacity:.11;
-  shape-rendering: crispEdges;
-}
-
-.axis text {
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+  text-anchor: middle;
   text-transform: uppercase;
-  dominant-baseline:text-after-edge;
 }
 
-.x.axis path {
-  display: none;
+.dottedLine {
+  opacity: 0.2;
+  stroke: black;
+  fill: none;
+  stroke-dasharray:1 1 
 }
 
-.x.axis .tick line {
-  display: none;
+.percent {
+  font-size: 18px;
 }
 
-.x.axis .tick text {
-  opacity:.11;
+.percent.large {
+  font-size: 72px;
 }
 
-rect {
-  fill: #000;
-  opacity: .11;
+.info {
+  text-transform: none;
+  font-family: 'Material Icons';
+  font-size: 24px;
+  fill: #999;
 }
