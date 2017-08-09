@@ -1,33 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-
 body {
   margin:0;
-  font-size: 10px;
-  font-family: 'Roboto', sans-serif;
   text-align: center;
-  text-anchor: middle;
-  text-transform: uppercase;
-}
-
-.dottedLine {
-  opacity: 0.2;
-  stroke: black;
-  fill: none;
-  stroke-dasharray:1 1 
-}
-
-.percent {
-  font-size: 18px;
-}
-
-.percent.large {
-  font-size: 72px;
-}
-
-.info {
-  text-transform: none;
-  font-family: 'Material Icons';
-  font-size: 24px;
-  fill: #999;
 }

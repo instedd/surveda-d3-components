@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3'
-
+import './Donut.css';
 
 class Donut extends Component {
 
@@ -14,7 +14,7 @@ class Donut extends Component {
 
   d3Render(initial = false) {
 
-    const { width, height, value, semi, weight, background, foreground } = this.props
+    const { width, height, value, semi, weight} = this.props
     const tau = Math.PI * (semi? 1 : 2)
     const radius = Math.min(width/2, semi?height : height/2)
     const transitionDuration = initial ? 0 : 500
@@ -39,22 +39,18 @@ class Donut extends Component {
     if(initial) {
       d3.select(this.refs.background)
                 .datum({endAngle: tau - offset})
-                .style("fill", background)
                 .attr("d", arc)
 
       d3.select(this.refs.foreground)
                 .datum({endAngle: angle - offset})
-                .style("fill", foreground)
                 .attr("d", arc)
     } else {
        d3.select(this.refs.background)
-                .style("fill", background)
                 .transition()
                 .duration(transitionDuration)
                 .attrTween("d", arcTween(tau - offset))
 
       d3.select(this.refs.foreground)
-                .style("fill", foreground)
                 .transition()
                 .duration(transitionDuration)
                 .attrTween("d", arcTween(angle - offset))
@@ -64,14 +60,14 @@ class Donut extends Component {
 
   render() {
 
-    const {width, height, semi} = this.props
+    const {width, height, semi, color} = this.props
     const radius = Math.min(width/2, semi?height : height/2)
 
     return (
-      <svg width={width} height={height}>
+      <svg className="donut" width={width} height={height}>
         <g ref="container" transform={`translate(${radius}, ${radius})`}>
-          <path ref="background"/>
-          <path ref="foreground"/>
+          <path className="background" ref="background"/>
+          <path className={color} ref="foreground"/>
         </g>
       </svg>
     )
