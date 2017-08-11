@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+.retriesHistogram {
+	font-family: 'Roboto', sans-serif;
+	font-size: 12px;
+	text-anchor: middle;
+	margin: 0 auto;
+	shape-rendering: crispEdges;
+}
+
+.retriesHistogram + * {
+	clear: both;
+}
+
+.retriesHistogram .icon {
+	font-family: 'Material Icons';
+	font-size: 24px;
+	baseline-shift: -8px;
+	fill: #999999;
+	text-transform: none;
+}
+
+.retriesHistogram .arrow {
+	fill: #d6d6d6;
+}
+
+.retriesHistogram .tick,
+.retriesHistogram .label {
+	text-transform: uppercase;
+	fill: #999;
+	color: #999;
+}
+
+.retriesHistogram .tick line {
+	opacity: 0.1;
+}
+
+.retriesHistogram .references {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.retriesHistogram .reference {
+	display: inline-flex;
+	align-items: center;
+	text-transform: uppercase;
+	color: #999;
+	margin-left: 18px;
+}
+
+.retriesHistogram .timewindowStatus {
+	display: inline-flex;
+	align-items: center;
+	text-transform: uppercase;
+	color: #999;
+}
+
+.retriesHistogram .timewindowStatus .icon {
+	margin-right: 6px;
+}
+
+.retriesHistogram .trying {
+	fill: #000;
+	background: #000;
+}
+
+.retriesHistogram .standby {
+	fill: #ccc;
+	background: #ccc;
+}
+
+.retriesHistogram .complete {
+	fill: #4caf50;
+	background: #4caf50;
+}
+
+.retriesHistogram .timewindow {
+	fill: #2196f3;
+	background: #2196f3;
+}
+
+.retriesHistogram .mask {
+	fill: #dedede;
+}
+
+.retriesHistogram .domain {
+	display: none;
+}
+
+
+.retriesHistogram .circle {
+	display: inline-flex;
+	margin-right: 6px;
+	width: 12px;
+	height: 12px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}

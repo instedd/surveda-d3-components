@@ -2,25 +2,26 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 .queueSize {
-  font-family: 'Roboto', sans-serif;
-  font-size: 12px;
-  text-anchor: middle;
+	font-family: 'Roboto', sans-serif;
+	font-size: 12px;
+	text-anchor: middle;
+	shape-rendering: crispEdges; 
 }
 
 .queueSize .icon {
-  font-family: 'Material Icons';
-  font-size: 24px;
-  baseline-shift: -6px;
-  fill: #f44336;
+	font-family: 'Material Icons';
+	font-size: 24px;
+	baseline-shift: -6px;
+	fill: #f44336;
 }
 
 .queueSize .needed {
-  font-size: 18px;
+ 	font-size: 18px;
 }
 
 .queueSize .missing {
-  font-size: 18px;
-  fill: #f44336;
+	font-size: 18px;
+	fill: #f44336;
 }
 
 .queueSize .progress {
