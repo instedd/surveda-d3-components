@@ -4,7 +4,7 @@ import './RetriesHistogram.css';
 
 
 const margin = {left:18, top:36, right:18, bottom:18}
-const references = [{label:"Trying", className:"trying"}, {label: "Stand by", className:"standby"}, {label:"Completes", className:"completes"}, {label: "Time window surveys", className: "timewindow"}]
+const references = [{label:"Trying", className:"trying"}, {label: "Stand by", className:"standby"}, {label:"Completes", className:"complete"}, {label: "Time window surveys", className: "timewindow"}]
 
 class RetriesHistogram extends Component {  
 
@@ -19,19 +19,36 @@ class RetriesHistogram extends Component {
   }
 
   calculateSize(props) {
-    var offset = 0
-    props.schedule.forEach(step => {
-      step.delay = step.delay || 0
-      offset += step.delay
-      step.offset = offset
-    })
+    const schedule = props.schedule.map(step => ({...step}))
+    const actives = [...props.actives]
+    const completes = [...props.completes]
     const width = props.width - margin.left - margin.right
-    const x = d3.scaleBand().domain(d3.range(0, d3.sum(props.schedule, item => item.delay)+1, 1)).rangeRound([0, width]).padding(0.1)
     const activesHeight = 72
-    const yActives = d3.scaleLinear().domain([d3.max(props.values), 0]).range([0, activesHeight])
+    const yActives = d3.scaleLinear().domain([d3.max(props.actives), 0]).range([0, activesHeight])
     const completesHeight = activesHeight - yActives(d3.max(props.completes))
     const yCompletes = d3.scaleLinear().domain([d3.max(props.completes), 0]).range([0, completesHeight])
-    return {width, activesHeight, completesHeight, x, yActives, yCompletes}
+
+    const percent = 84 / width
+    const delay = Math.ceil(d3.sum(schedule, step => step.delay) * percent)
+    const count = d3.sum(schedule, step => step.delay < delay && step.delay? 1 : 0)
+    const valid = d3.sum(schedule, step => step.delay > delay? step.delay : 0)
+    const min = Math.ceil(valid * percent / (1 - percent * count))
+    var offset = 0
+
+    schedule.forEach(step => {
+      const length = step.delay? Math.max(0, min - step.delay) : 0
+      step.delay += length
+      offset += step.delay
+      step.offset = offset
+      if(length) {
+        actives.splice(step.offset-step.delay+1, 0, ...Array.from({length}, v => 0))
+        completes.splice(step.offset-step.delay+1, 0, ...Array.from({length}, v => 0))
+      }
+    })
+
+    const x = d3.scaleBand().domain(d3.range(0, d3.sum(schedule, step => step.delay)+1, 1)).rangeRound([0, width]).padding(0.1)
+
+    return {actives, completes, schedule, width, activesHeight, completesHeight, x, yActives, yCompletes}
   }
 
   componentDidMount() {
@@ -44,8 +61,7 @@ class RetriesHistogram extends Component {
 
   renderD3(initial=false) {
 
-    const {values, schedule, completes} = this.props
-    const {x, yActives, yCompletes, activesHeight, completesHeight} = this.state
+    const {x, yActives, yCompletes, activesHeight, completesHeight, actives, schedule, completes} = this.state
     
     d3.select(this.refs.masks)
       .selectAll(".mask")
@@ -59,7 +75,7 @@ class RetriesHistogram extends Component {
     
     d3.select(this.refs.bars)
       .selectAll(".bar")
-      .data(values)
+      .data(actives)
     .enter().append("rect")
       .attr("class", (d, i) => {
         return schedule.some(step => step.offset === i)? "bar trying" : "bar standby"
@@ -88,7 +104,7 @@ class RetriesHistogram extends Component {
       .attr("dy", null)
 
     d3.select(this.refs.grid)
-      .call(d3.axisRight(yActives).ticks(3).tickSizeInner(values.length*x.step()-1))
+      .call(d3.axisRight(yActives).ticks(3).tickSizeInner(actives.length*x.step()-1))
       .selectAll("text")
       .remove()
   }
@@ -126,8 +142,7 @@ class RetriesHistogram extends Component {
   }
 
   render() {
-    const {schedule, values} = this.props
-    const {width, completesHeight, activesHeight, x} = this.state
+    const {width, completesHeight, activesHeight, x, schedule, actives} = this.state
     const padding = 6
 
     return (
@@ -139,7 +154,7 @@ class RetriesHistogram extends Component {
                 schedule.map((step, index) => {
                   return (
                     <g key={index} transform={`translate(${x(step.offset)},0)`}>
-                      <text className={values[step.offset]? "icon trying" : "icon"}>{this.icon(step.type)}</text>
+                      <text className={actives[step.offset]? "icon trying" : "icon"}>{this.icon(step.type)}</text>
                       {step.delay ? this.arrow(step.label, step.delay * x.step()) : null}
                     </g>
                   )
