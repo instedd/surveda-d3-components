@@ -4,7 +4,7 @@ import './RetriesHistogram.css';
 
 
 const margin = {left:18, top:36, right:18, bottom:18}
-const references = [{label:"Trying", className:"trying"}, {label: "Stand by", className:"standby"}, {label:"Completes", className:"complete"}, {label: "Time window surveys", className: "timewindow"}]
+const fix = -1
 
 class RetriesHistogram extends Component {  
 
@@ -14,22 +14,21 @@ class RetriesHistogram extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
     this.setState(this.calculateSize(nextProps))
   }
 
   calculateSize(props) {
-    const schedule = props.schedule.map(step => ({...step}))
+    const schedule = props.schedule.map(step => ({...step, delay:Math.ceil(step.delay)}))
     const actives = [...props.actives]
     const completes = [...props.completes]
     const width = props.width - margin.left - margin.right
     const activesHeight = 72
-    const yActives = d3.scaleLinear().domain([d3.max(props.actives), 0]).range([0, activesHeight])
-    const completesHeight = activesHeight - yActives(d3.max(props.completes))
-    const yCompletes = d3.scaleLinear().domain([d3.max(props.completes), 0]).range([0, completesHeight])
+    const yActives = d3.scaleLinear().domain([d3.max(actives), 0]).range([0, activesHeight])
+    const completesHeight = activesHeight - yActives(d3.max(completes))
+    const yCompletes = d3.scaleLinear().domain([d3.max(completes), 0]).range([0, completesHeight])
 
     const percent = 84 / width
-    const delay = Math.ceil(d3.sum(schedule, step => step.delay) * percent)
+    const delay = d3.sum(schedule, step => step.delay) * percent
     const count = d3.sum(schedule, step => step.delay < delay && step.delay? 1 : 0)
     const valid = d3.sum(schedule, step => step.delay > delay? step.delay : 0)
     const min = Math.ceil(valid * percent / (1 - percent * count))
@@ -41,7 +40,7 @@ class RetriesHistogram extends Component {
       offset += step.delay
       step.offset = offset
       if(length) {
-        actives.splice(step.offset-step.delay+1, 0, ...Array.from({length}, v => 0))
+        actives.splice(step.offset-step.delay+1, 0, ...Array.from({length}, v => fix))
         completes.splice(step.offset-step.delay+1, 0, ...Array.from({length}, v => 0))
       }
     })
@@ -74,17 +73,19 @@ class RetriesHistogram extends Component {
       .attr("height", activesHeight);
     
     d3.select(this.refs.bars)
-      .selectAll(".bar")
+      .selectAll("rect")
       .data(actives)
     .enter().append("rect")
       .attr("class", (d, i) => {
-        return schedule.some(step => step.offset === i)? "bar trying" : "bar standby"
+        return d === fix? "bar fix" : (schedule.some(step => step.offset === i)? "bar trying" : "bar standby")
       })
       .merge(d3.select(this.refs.bars).selectAll(".bar"))
       .attr("x", (d, i) => x(i))
-      .attr("y", d => yActives(d))
-      .attr("width", x.bandwidth())
-      .attr("height", d => activesHeight - yActives(d));
+      .attr("y", d =>  d === fix? 0 : yActives(d))
+      .attr("width", d => d === fix? x.step() : x.bandwidth())
+      .attr("height", d => d === fix? activesHeight : activesHeight - yActives(d))
+    .exit()
+      .remove()
 
     d3.select(this.refs.completes)
       .selectAll(".bar")
@@ -95,7 +96,9 @@ class RetriesHistogram extends Component {
       .attr("x", (d, i) => x(i))
       .attr("width", x.bandwidth())
       .attr("y", d => yCompletes(d))
-      .attr("height", d => completesHeight - yCompletes(d));
+      .attr("height", d => completesHeight - yCompletes(d))
+    .exit()
+      .remove()
 
     d3.select(this.refs.axis)
       .call(d3.axisLeft(yActives).ticks(3).tickSizeInner(0))
@@ -142,6 +145,7 @@ class RetriesHistogram extends Component {
   }
 
   render() {
+    const {references} = this.props
     const {width, completesHeight, activesHeight, x, schedule, actives} = this.state
     const padding = 6
 
@@ -169,7 +173,7 @@ class RetriesHistogram extends Component {
           </g>
         </svg>
         <div className="references">
-          <div className="timewindowStatus"><span className="icon">access_time</span> Contact time window 6:00 AM to 6:00 PM (ends in 11 hours)</div>
+          <div className="status"><span className="icon">access_time</span> Contact time window 6:00 AM to 6:00 PM (ends in 11 hours)</div>
           <div>
             {
 

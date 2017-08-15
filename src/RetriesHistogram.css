@@ -9,10 +9,6 @@
 	shape-rendering: crispEdges;
 }
 
-.retriesHistogram + * {
-	clear: both;
-}
-
 .retriesHistogram .icon {
 	font-family: 'Material Icons';
 	font-size: 24px;
@@ -50,14 +46,14 @@
 	margin-left: 18px;
 }
 
-.retriesHistogram .timewindowStatus {
+.retriesHistogram .status {
 	display: inline-flex;
 	align-items: center;
 	text-transform: uppercase;
 	color: #999;
 }
 
-.retriesHistogram .timewindowStatus .icon {
+.retriesHistogram .status .icon {
 	margin-right: 6px;
 }
 
@@ -74,6 +70,12 @@
 .retriesHistogram .complete {
 	fill: #4caf50;
 	background: #4caf50;
+}
+
+.retriesHistogram .fix {
+	fill: #fff;
+	background: #fff;
+	opacity: 0.6;
 }
 
 .retriesHistogram .timewindow {
