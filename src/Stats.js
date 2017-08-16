@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import * as d3 from 'd3'
 import './Stats.css';
 
-const formatter = d3.format(".3s")
+const formatter = d3.format(",")
 
 class Stats extends Component {  
 
   render() {
-    const {data} = this.props
+    const {data, width} = this.props
 
     return (
-      <div className="stats">
+      <div className="stats" style={{width}}>
         {
 
           data.map((item, index) => {

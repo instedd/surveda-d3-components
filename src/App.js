@@ -73,7 +73,7 @@ class App extends Component {
         <button onClick={() => this.onClick(12)}>Expand</button>
         <button onClick={() => this.onClick(-12)}>Shrink</button>
         <div style={{marginBottom:50}}>
-          <Stats data={this.state.stats}/>
+          <Stats data={this.state.stats} width={this.state.width*2}/>
           <Forecasts data={this.state.forecasts} width={this.state.width*2} height={this.state.height}/>
         </div>
         <div>

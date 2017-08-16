@@ -5,10 +5,13 @@
 	font-family: 'Roboto', sans-serif;
 	font-size: 48px;
 	text-align: center;
-	display: flex;
+	display: grid;
+	grid-template-columns: 25% 25% 25% 25%;
 	justify-content: space-between;
-	margin: 0 120px;
+	margin: 0 auto;
 }
+
+.stats > div {}
 
 .stats .label {
 	font-size: 10px;
