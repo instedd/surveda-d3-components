@@ -1,9 +1,10 @@
+import * as d3 from 'd3'
 import React, { Component } from 'react';
 import SuccessRate from './SuccessRate'
 import QueueSize from './QueueSize'
-import * as d3 from 'd3'
 import RetriesHistogram from './RetriesHistogram'
 import Forecasts from './Forecasts'
+import Stats from './Stats'
 
 class App extends Component {
 
@@ -20,7 +21,7 @@ class App extends Component {
     const value = Math.random()
     const width = x? this.state.width + x : 660
     const height = x? this.state.height + x : 330
-    var max = 200+Math.random()*400
+    var max = 600+Math.random()*600
     const schedule = [{type:"voice", delay:0}, {type:"voice", delay:0.1, label:"10m"}, {type:"sms", delay:74, label:"74h"}, {type:"voice", delay:0.1, label:"10m"}, {type:"sms", delay:4, label:"4h"}, {type:"discard", delay:26, label:"26h"}]
     const length = d3.sum(schedule, step => step.delay? Math.ceil(step.delay) : 1)
     const actives = Array.from({length}, v => Math.random() > 0.5? Math.random()*max : 0)
@@ -35,7 +36,13 @@ class App extends Component {
       const forecast = this.getForecast(today, new Date(today.getTime() + Math.round(Math.random() * 50 * 24 * 60 * 60 * 1000)), initial)
       return {...d, values, forecast}
     })
-    return {value, width, height, schedule, actives, completes, forecasts, retriesHistogramReferences}
+    const stats = [
+      {value:Math.round(Math.random()*1500), label:"Target"},
+      {value:Math.round(Math.random()*1500), label:"Completes"},
+      {value:Math.round(Math.random()*1500), label:"Partials"},
+      {value:Math.round(Math.random()*1500), label:"Contacted Respondents"}
+    ]
+    return {value, stats, width, height, schedule, actives, completes, forecasts, retriesHistogramReferences}
   }
 
   getValues(start, today) {
@@ -66,6 +73,7 @@ class App extends Component {
         <button onClick={() => this.onClick(12)}>Expand</button>
         <button onClick={() => this.onClick(-12)}>Shrink</button>
         <div style={{marginBottom:50}}>
+          <Stats data={this.state.stats}/>
           <Forecasts data={this.state.forecasts} width={this.state.width*2} height={this.state.height}/>
         </div>
         <div>

@@ -9,6 +9,7 @@ class Forecasts extends Component {
 
   constructor(props) {
     super(props)
+    console.log("numbers", "time window", "retries histogram shink bug")
     this.state = this.calculateSize(props)
   }
 
@@ -73,9 +74,10 @@ class Forecasts extends Component {
 
     d3.select(this.refs.y)
       .attr("class", "axis")
-      .call(d3.axisLeft(y).ticks(height/60))
+      .call(d3.axisLeft(y).ticks(height/60).tickSizeInner(0).tickFormat(d3.format(".2s")))
       .selectAll("text")
       .attr("fill", null)
+      .attr("dy", null)
 
     d3.select(this.refs.grid)
       .attr("class", "grid")

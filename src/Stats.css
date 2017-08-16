@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+.stats {
+	font-family: 'Roboto', sans-serif;
+	font-size: 48px;
+	text-align: center;
+	display: flex;
+	justify-content: space-between;
+	margin: 0 120px;
+}
+
+.stats .label {
+	font-size: 10px;
+	text-transform: uppercase;
+	display: block;
+}

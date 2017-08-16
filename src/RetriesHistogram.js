@@ -3,7 +3,7 @@ import * as d3 from 'd3'
 import './RetriesHistogram.css';
 
 
-const margin = {left:18, top:36, right:18, bottom:18}
+const margin = {left:36, top:36, right:18, bottom:18}
 const fix = -1
 
 class RetriesHistogram extends Component {  
@@ -101,7 +101,7 @@ class RetriesHistogram extends Component {
       .remove()
 
     d3.select(this.refs.axis)
-      .call(d3.axisLeft(yActives).ticks(3).tickSizeInner(0))
+      .call(d3.axisLeft(yActives).ticks(3).tickSizeInner(0).tickFormat(d3.format(".2s")))
       .selectAll("text")
       .attr("fill", null)
       .attr("dy", null)
@@ -155,14 +155,10 @@ class RetriesHistogram extends Component {
           <g transform={`translate(${margin.left},${margin.top})`}>
             <g ref="schedule"transform={`translate(0,${-margin.top/2})`}>
               {
-                schedule.map((step, index) => {
-                  return (
-                    <g key={index} transform={`translate(${x(step.offset)},0)`}>
+                schedule.map((step, index) => <g key={index} transform={`translate(${x(step.offset)},0)`}>
                       <text className={actives[step.offset]? "icon trying" : "icon"}>{this.icon(step.type)}</text>
                       {step.delay ? this.arrow(step.label, step.delay * x.step()) : null}
-                    </g>
-                  )
-                })
+                    </g>)
               }
             </g>
             <g ref="masks" transform={`translate(${x(0)},0)`}/>
