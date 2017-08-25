@@ -1,40 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import * as d3 from 'd3'
 import Donut from './Donut'
-import './SuccessRate.css';
+import './SuccessRate.css'
 
 const margin = {left:18, top:18, right:18, bottom:18}
 
 class SuccessRate extends Component {
-
-  componentDidMount() {
-    this.d3Render(true)
-  }
-
-  componentDidUpdate() {
-    this.d3Render()
-  }
-
-  d3Render(initial = false) {
-
-    const transitionDuration = initial ? 0 : 500
-
-    d3.select(this.refs.line)
-      .transition()
-      .duration(transitionDuration)
-      .attr("transform", "rotate(" + 180*this.props.progress + ")")
-
-     d3.select(this.refs.backgroundLabel)
-      .transition()
-      .duration(transitionDuration)
-      .text(d3.format(".2f")(1-this.props.progress))
-
-     d3.select(this.refs.foregroundLabel)
-      .transition()
-      .duration(transitionDuration)
-      .text(d3.format(".2f")(this.props.progress))
-  }
-  
 
   render() {
 
@@ -48,6 +19,13 @@ class SuccessRate extends Component {
     return (
       <svg className="successRate" width={width+margin.left+margin.right} height={height+margin.top+margin.bottom}>
         <g ref="arc" transform={`translate(${(width+margin.left+margin.right-arcRadius*2)/2}, ${(height+margin.top+margin.bottom-arcRadius)/2})`}>
+          <g transform={`translate(${arcRadius},${arcRadius})`}>
+            <g ref="line" transform={`rotate(${180*progress})`}>
+              <path className="dottedLine" d={`M${-donutRadius} 0 h${-arcRadius+donutRadius+weight}`}/>
+              <text ref="backgroundLabel" className="initial label" transform={`translate(${-arcRadius-offset}, 0) rotate(-90)`}>{d3.format(".2f")(1-progress)}</text>
+              <text ref="foregroundLabel" className="actual label hanging" transform={`translate(${weight-arcRadius+offset}, 0) rotate(-90)`}>{d3.format(".2f")(progress)}</text>
+            </g>
+          </g>
           <path className="initial" d={`M0 ${arcRadius}
                                                       a${arcRadius} ${arcRadius} 0 1 1 ${arcRadius*2} 0
                                                       h${-weight}
@@ -75,13 +53,6 @@ class SuccessRate extends Component {
               <Donut value={actual} width={donutRadius} height={donutRadius} color="actual" weight="12" />
               <text x={donutRadius/2} y={donutRadius + margin.bottom} className="actual label">Actual success rate</text>
               <text x={donutRadius/2} y={donutRadius/2} className="actual percent middle">{d3.format(".1%")(actual)}</text>
-          </g>
-          <g transform={`translate(${arcRadius},${arcRadius})`}>
-            <g ref="line" >
-              <path className="dottedLine" d={`M${-donutRadius} 0 h${-arcRadius+donutRadius}`}/>
-              <text ref="backgroundLabel" className="initial label" transform={`translate(${-arcRadius-offset}, 0) rotate(-90)`}/>
-              <text ref="foregroundLabel" className="actual label hanging" transform={`translate(${weight-arcRadius+offset}, 0) rotate(-90)`}/>
-            </g>
           </g>
         </g>
       </svg>

@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import * as d3 from 'd3'
-import './QueueSize.css';
+import './QueueSize.css'
 
 
 const margin = {left:18, top:18, right:18, bottom:18}
@@ -22,43 +22,55 @@ class QueueSize extends Component {
     this.refs.content.setAttribute("transform", `translate(0,${offset})`)
   }
 
+  connector(x1, y1, x2, y2, turn, cornerHeight) {
+    const direction = x1 < x2? 1 : -1
+    const cornerWidth = Math.min(Math.abs(x1-x2)/2, cornerHeight)
+
+    return `M${x1} ${y1}
+            v${turn-cornerHeight}
+            q0 ${cornerHeight},${cornerWidth*direction} ${cornerHeight}
+            h${x2-x1-cornerWidth*2*direction}
+            q${cornerWidth*direction} 0,${cornerWidth*direction} ${cornerHeight}
+            V${y2}`
+  }
+
   render() {
 
     const {completes, pending, needed, missing, successRate, multiplier, weight} = this.props
     const width = this.props.width - margin.left - margin.right
     const height = this.props.height - margin.top - margin.bottom
-    const scale = width/needed
+    const scale = Math.min(1, width/needed, width/(completes+pending)/2)
     const offset = 12
     const corner = 6
+    const left = {  x1: (completes-pending)*scale/2,
+                    y1: weight,
+                    x2: -needed*scale/2,
+                    y2: height-weight}
+    const right = { x1: (completes+pending)*scale/2, 
+                    y1: weight,
+                    x2: needed*scale/2,
+                    y2: height-weight}
 
     return (
       <svg className="queueSize" width={width+margin.left+margin.right} height={height+margin.top+margin.bottom}>
         <g transform={`translate(${margin.top}, ${margin.left})`}>
-          <g transform={`translate(${(width-pending*scale)/2},0)`}>
-              <rect width={pending*scale} height={weight} className="background"/>
-              <rect width={completes*scale} height={weight} x={-completes*scale} className="progress"/>
-              <text x={-completes*scale-offset} y={weight/2} className="progress label end">{completes} Completes</text>
-              <text x={pending*scale+offset} y={weight/2} className="background label start">{pending} Pending</text>
-              <path className="dottedLine" d={`M0 0
-                                                v${weight-corner}
-                                                q0 ${corner},${-corner} ${corner}
-                                                h${-(width-pending*scale)/2+corner*2}
-                                                q${-corner} 0,${-corner} ${corner}
-                                                v${height-weight*3}`} transform={`translate(0,${weight})`}/>
-              <path className="dottedLine" d={`M0 0
-                                                v${weight-corner}
-                                                q0 ${corner},${corner} ${corner}
-                                                h${(width-pending*scale)/2-corner*2}
-                                                q${corner} 0,${corner} ${corner}
-                                                v${height-weight*3}`} transform={`translate(${pending*scale},${weight})`}/>
+          <g transform={`translate(${width/2},0)`}>
+              <g transform={`translate(${-(pending+completes)*scale/2},0)`}>
+                <rect width={completes*scale} height={weight} className="progress"/>
+                <rect width={pending*scale} height={weight} x={completes*scale} className="background"/>
+                <text x={-offset} y={weight/2} className="progress label end">{completes} Completes</text>
+                <text x={(pending+completes)*scale+offset} y={weight/2} className="background label start">{pending} Pending</text>
+              </g>
+              <path style={{display:needed? "auto":"none"}} className="dottedLine" d={this.connector(left.x1, left.y1, left.x2, left.y2, weight-(left.x1 > left.x2 && right.x1 > right.x2?corner:0), corner)}/>
+              <path style={{display:needed? "auto":"none"}} className="dottedLine" d={this.connector(right.x1, right.y1, right.x2, right.y2, weight, corner)}/>
               <g ref="content">
-                <text className="needed">{`${d3.format(".3s")(needed)} needed to complete target`}</text>
-                <text className="multiplier" y={18}>{`×${multiplier} (1/${successRate} Estimated success rate`})</text>
-                {missing? <text className="missing" y={54} ><tspan className="icon">warning</tspan> {`${d3.format(".3s")(missing)} missing`}</text> : null}
+                <text className="needed">{`${d3.format(",")(needed)} needed to complete target`}</text>
+                <text className="multiplier" y={18}>{`×${multiplier} (1/${d3.format(".3f")(successRate)} Estimated success rate`})</text>
+                {missing? <text className="missing" y={54} ><tspan className="icon">warning</tspan> {`${d3.format(",")(missing)} missing`}</text> : null}
               </g>
           </g>
           <g transform={`translate(0,${height-weight})`}>
-              <rect width={width} height={weight}/>
+              <rect width={needed*scale} height={weight} x={(width-needed*scale)/2}/>
               {missing? <rect className="missing" width={missing*scale} height={weight} x={width-missing*scale} />:null}
           </g>
         </g>

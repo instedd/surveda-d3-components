@@ -50,8 +50,7 @@
 }
 
 .queueSize .dottedLine {
-  opacity: 0.2;
-  stroke: black;
+  stroke: #ccc;
   fill: none;
   stroke-dasharray:1 1 
 }

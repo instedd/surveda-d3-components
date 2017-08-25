@@ -32,18 +32,10 @@
 	opacity: 0.1;
 }
 
-.retriesHistogram .references {
+.retriesHistogram .bottom {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-}
-
-.retriesHistogram .reference {
-	display: inline-flex;
-	align-items: center;
-	text-transform: uppercase;
-	color: #999;
-	margin-left: 18px;
 }
 
 .retriesHistogram .status {
@@ -62,9 +54,22 @@
 	background: #000;
 }
 
+.retriesHistogram .out {
+	pointer-events: none;
+	fill-opacity: .9;
+	fill: #ddd;
+	opacity: .9;
+	background: #ddd;
+}
+
 .retriesHistogram .standby {
-	fill: #ccc;
-	background: #ccc;
+	fill: #999;
+	background: #999;
+}
+
+.retriesHistogram .standby:hover {
+	fill: #666;
+	background: #666;
 }
 
 .retriesHistogram .complete {
@@ -79,8 +84,8 @@
 }
 
 .retriesHistogram .timewindow {
-	fill: #2196f3;
-	background: #2196f3;
+	fill: #fff;
+	background: #fff;
 }
 
 .retriesHistogram .mask {
@@ -91,13 +96,21 @@
 	display: none;
 }
 
+.retriesHistogram .red {
+	color: #f44336;
+	fill: #f44336;
+}
 
-.retriesHistogram .circle {
-	display: inline-flex;
-	margin-right: 6px;
-	width: 12px;
-	height: 12px;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
+.retriesHistogram .dottedLine {
+  stroke: #ccc;
+  fill: none;
+  stroke-dasharray:1 1 
+}
+
+.retriesHistogram .dottedLine.trying {
+  stroke: black;
+}
+
+.retriesHistogram .dottedLine.red {
+  stroke: #f44336;
 }

@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import * as d3 from 'd3'
-import './Forecasts.css';
-
+import './Forecasts.css'
+import References from './References'
 
 const margin = {left:36, top:18, right:18, bottom:36}
 
@@ -9,7 +9,6 @@ class Forecasts extends Component {
 
   constructor(props) {
     super(props)
-    console.log("numbers", "time window", "retries histogram shink bug")
     this.state = this.calculateSize(props)
   }
 
@@ -103,18 +102,9 @@ class Forecasts extends Component {
             <g ref="y"/>
           </g>
         </svg>
-        <div className="references">
+        <div className="bottom">
           <div className="status"><span className="icon">event</span> 3 weeks to complete all quotas</div>
-          <div>
-            {
-              data.map((serie, index, array) => {
-                
-                return (
-                  <div key={index} className="reference"><div style={{background:serie.color}} className="circle"/>{serie.label}</div>
-                )
-              })
-            }
-          </div>
+          <References data={data.map(serie => ({label: serie.label, color:serie.color}))}/>
         </div>
       </div>
     )

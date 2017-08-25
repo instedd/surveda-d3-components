@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+.references {
+	font-family: 'Roboto', sans-serif;
+	font-size: 10px;
+	margin: 0;
+}
+
+.references .label {
+	text-transform: uppercase;
+	display: block;
+}
+
+.references .reference {
+	display: inline-flex;
+	align-items: center;
+	text-transform: uppercase;
+	color: #999;
+	margin-left: 18px;
+}
+
+.references .circle {
+	margin-right: 6px;
+	width: 12px;
+	height: 12px;
+	border-radius: 6px;
+}
