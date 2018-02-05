@@ -74,7 +74,8 @@ class App extends Component {
                 completes[i].value += done
                 pending -= done
               }
-            case "voice": 
+            break
+            case "voice":
               if(step.offset) {
                 let selection = Math.min((1 + Math.random()) * mean, actives[step.offset].value)
                 actives[step.offset - 1].value += actives[step.offset].value - selection
@@ -107,7 +108,7 @@ class App extends Component {
     actives.pop()
     actives.unshift({value:0, id:id})
     position++
-    position %= 24 
+    position %= 24
     id++
     const completesSum = d3.sum(completes, d => d.value)
     stats = [
