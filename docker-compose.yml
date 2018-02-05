@@ -1,0 +1,21 @@
+version: '3'
+
+volumes:
+  deps:
+  build:
+  node_modules:
+  yarn-cache:
+
+services:
+  node:
+    image: node:9.1
+    command: yarn start
+    working_dir: /app
+    volumes:
+      - './:/app'
+      - 'build:/app/build'
+      - 'deps:/app/deps'
+      - 'node_modules:/app/node_modules'
+      - 'yarn-cache:/usr/local/share/.cache/yarn'
+    ports:
+      - 3000:3000
