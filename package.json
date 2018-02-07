@@ -1,5 +1,5 @@
 {
-  "name": "surveda-d3-components",
+  "name": "@instedd/surveda-d3-components",
   "version": "1.0.0",
   "description": "Surveda D3 React components",
   "main": "lib/index.js",
