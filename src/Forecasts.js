@@ -1,12 +1,10 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
-import './Forecasts.css'
-import References from './References'
+import { References } from '.'
 
 const margin = {left:36, top:18, right:18, bottom:36}
 
-class Forecasts extends Component {  
-
+export default class Forecasts extends Component {
   constructor(props) {
     super(props)
     this.state = this.calculateSize(props)
@@ -18,8 +16,8 @@ class Forecasts extends Component {
 
   calculateSize(props) {
     var {width, height} = this.props
-    width -= margin.left + margin.right 
-    height -= margin.top + margin.bottom 
+    width -= margin.left + margin.right
+    height -= margin.top + margin.bottom
     return {width, height}
   }
 
@@ -86,7 +84,6 @@ class Forecasts extends Component {
   }
 
   render() {
-
     const {data} = this.props
     const {width, height} = this.state
     const padding = 6
@@ -110,6 +107,3 @@ class Forecasts extends Component {
     )
   }
 }
-
-
-export default Forecasts

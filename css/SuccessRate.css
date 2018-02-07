@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import './base.css';
 
 .successRate {
   font-family: 'Roboto', sans-serif;
@@ -30,7 +29,7 @@
 .successRate .dottedLine {
   stroke: #ccc;
   fill: none;
-  stroke-dasharray:1 1 
+  stroke-dasharray:1 1
 }
 
 .successRate .initial {

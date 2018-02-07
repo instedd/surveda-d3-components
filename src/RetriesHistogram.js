@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
-import './RetriesHistogram.css'
-import References from './References'
+import { References } from '.'
 
 const margin = {left:36, top:36, right:18, bottom:18}
 const fix = -1
 
-class RetriesHistogram extends Component {  
-
+export default class RetriesHistogram extends Component {
   constructor(props) {
     super(props)
     this.state = this.calculateSize(props)
@@ -33,7 +31,7 @@ class RetriesHistogram extends Component {
     const count = d3.sum(schedule, step => step.delay < delay && step.delay? 1 : 0)
     const valid = d3.sum(schedule, step => step.delay > delay? step.delay : 0)
     const min = Math.ceil(valid * percent / (1 - percent * count))
-    
+
     var offset = 0
     schedule.forEach(step => {
       let start = step.offset
@@ -70,7 +68,6 @@ class RetriesHistogram extends Component {
   }
 
   renderD3(initial=false) {
-
     const {x, yActives, actives} = this.state
 
     d3.select(this.refs.axis)
@@ -141,7 +138,7 @@ class RetriesHistogram extends Component {
                 let isTrying = schedule.some(step => step.offset === index) && position < duration
                 let className = "bar " + (isFix? "fix" : (isDiscard? "red" : (isTrying? "trying" : "standby")))
 
-                  return (<rect key={index} 
+                  return (<rect key={index}
                                 className={className}
                                 x={x(index)}
                                 y={slot.value === fix? 0 : yActives(slot.value)}
@@ -163,7 +160,7 @@ class RetriesHistogram extends Component {
             <g ref="completes" transform={`translate(0,${activesHeight+padding})`}>
               {
                 completes.map((slot, index) => {
-                  return (<rect key={index} 
+                  return (<rect key={index}
                                 className="bar complete"
                                 x={x(index)}
                                 y={slot.value === fix? completesHeight : yCompletes(slot.value)}
@@ -198,6 +195,3 @@ class RetriesHistogram extends Component {
     )
   }
 }
-
-
-export default RetriesHistogram

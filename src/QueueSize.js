@@ -1,12 +1,9 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
-import './QueueSize.css'
-
 
 const margin = {left:18, top:18, right:18, bottom:18}
 
-class QueueSize extends Component {  
-
+export default class QueueSize extends Component {
   componentDidMount() {
     this.alignContent()
   }
@@ -35,7 +32,6 @@ class QueueSize extends Component {
   }
 
   render() {
-
     const {completes, pending, needed, missing, successRate, multiplier, weight} = this.props
     const width = this.props.width - margin.left - margin.right
     const height = this.props.height - margin.top - margin.bottom
@@ -46,7 +42,7 @@ class QueueSize extends Component {
                     y1: weight,
                     x2: -needed*scale/2,
                     y2: height-weight}
-    const right = { x1: (completes+pending)*scale/2, 
+    const right = { x1: (completes+pending)*scale/2,
                     y1: weight,
                     x2: needed*scale/2,
                     y2: height-weight}
@@ -78,6 +74,3 @@ class QueueSize extends Component {
     )
   }
 }
-
-
-export default QueueSize

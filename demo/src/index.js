@@ -1,18 +1,14 @@
 import * as d3 from 'd3'
 import React, { Component } from 'react'
-import SuccessRate from './SuccessRate'
-import QueueSize from './QueueSize'
-import RetriesHistogram from './RetriesHistogram'
-import Forecasts from './Forecasts'
-import Stats from './Stats'
-import './App.css'
+import {render} from 'react-dom'
+import { SuccessRate, QueueSize, RetriesHistogram, Forecasts, Stats } from '../../src'
+import './index.css'
 
 var interval
 var count = 0
 var id = 0
 
-class App extends Component {
-
+class Demo extends Component {
   constructor() {
     super()
     this.state = {...this.getData(), ...this.getSize(0)}
@@ -236,4 +232,4 @@ class App extends Component {
   }
 }
 
-export default App
+render(<Demo/>, document.querySelector('#demo'))

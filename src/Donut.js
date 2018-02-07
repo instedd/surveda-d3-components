@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3'
-import './Donut.css'
 
-class Donut extends Component {
-
+export default class Donut extends Component {
   componentDidMount() {
     this.d3Render()
   }
@@ -13,7 +11,6 @@ class Donut extends Component {
   }
 
   d3Render() {
-
     const {width, height, value, semi, weight} = this.props
     const tau = Math.PI * (semi? 1 : 2)
     const radius = Math.min(width/2, semi?height : height/2)
@@ -33,10 +30,8 @@ class Donut extends Component {
               .datum({endAngle: angle - offset})
               .attr("d", arc)
   }
-  
 
   render() {
-
     const {width, height, semi, color} = this.props
     const radius = Math.min(width/2, semi?height : height/2)
 
@@ -50,6 +45,3 @@ class Donut extends Component {
     )
   }
 }
-
-
-export default Donut

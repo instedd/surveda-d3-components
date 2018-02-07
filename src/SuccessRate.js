@@ -1,14 +1,11 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
-import Donut from './Donut'
-import './SuccessRate.css'
+import { Donut } from '.'
 
 const margin = {left:18, top:18, right:18, bottom:18}
 
-class SuccessRate extends Component {
-
+export default class SuccessRate extends Component {
   render() {
-
     const {progress, weight, initial, actual, estimated} = this.props
     const width = this.props.width - margin.left - margin.right
     const height = this.props.height - margin.top - margin.bottom
@@ -59,6 +56,3 @@ class SuccessRate extends Component {
     )
   }
 }
-
-
-export default SuccessRate

@@ -9,7 +9,7 @@ volumes:
 services:
   node:
     image: node:9.1
-    command: yarn start
+    command: npm start
     working_dir: /app
     volumes:
       - './:/app'

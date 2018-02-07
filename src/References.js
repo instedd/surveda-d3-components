@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
-import './References.css'
 
-class References extends Component {  
-
+export default class References extends Component {
   render() {
     const {data} = this.props
 
@@ -19,6 +17,3 @@ class References extends Component {
     )
   }
 }
-
-
-export default References
