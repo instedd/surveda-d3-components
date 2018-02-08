@@ -5,10 +5,10 @@ const formatter = d3.format(",")
 
 export default class Stats extends Component {
   render() {
-    const {data, width} = this.props
+    const {data} = this.props
 
     return (
-      <div className="stats" style={{width}}>
+      <div className="stats">
         {
 
           data.map((item, index) => {

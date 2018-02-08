@@ -193,7 +193,7 @@ class Demo extends Component {
               <div className="title">Percent of completes</div>
               <div className="description">Count partials as completed</div>
             </div>
-            <Stats data={stats} width={width*2}/>
+            <Stats data={stats}/>
             <Forecasts data={forecasts} width={width*2} height={height}/>
           </div>
           <hr></hr>
