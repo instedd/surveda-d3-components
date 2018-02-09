@@ -18,7 +18,7 @@ export default class Forecasts extends Component {
     const { container } = this.refs
     const containerRect = container.getBoundingClientRect()
 
-    const width = Math.round(containerRect.width)
+    const width = Math.round(containerRect.width) - margin.left - margin.right
     const height = Math.round(width/2)
 
     this.setState({width, height})
@@ -99,7 +99,7 @@ export default class Forecasts extends Component {
 
     return (
       <div className="forecasts" ref='container'>
-        <svg ref="svg" width={width} height={height+margin.top+margin.bottom+padding}>
+        <svg ref="svg" width={width + margin.left + margin.right} height={height + margin.top + margin.bottom + padding}>
           <g transform={`translate(${margin.left},${margin.top})`}>
             <g ref="grid"/>
             <g ref="values"/>
