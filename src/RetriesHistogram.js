@@ -8,20 +8,22 @@ const fix = -1
 export default class RetriesHistogram extends Component {
   constructor(props) {
     super(props)
-    this.state = this.calculateSize(props)
+    this.recalculate = this.calculateSize.bind(this)
+    this.state = this.calculateSize()
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState(this.calculateSize(nextProps))
-  }
-
-  calculateSize(props) {
+  calculateSize() {
     const {duration, position, quota} = this.props
-    const schedule = props.schedule.map(step => ({...step, delay:Math.ceil(step.delay)}))
-    const timewindows = props.actives.map(slot => false)
-    const actives = props.actives.map(slot => ({...slot}))
-    const completes = props.completes.map(slot => ({...slot}))
-    const width = props.width - margin.left - margin.right
+    const schedule = this.props.schedule.map(step => ({...step, delay:Math.ceil(step.delay)}))
+    const timewindows = this.props.actives.map(slot => false)
+    const actives = this.props.actives.map(slot => ({...slot}))
+    const completes = this.props.completes.map(slot => ({...slot}))
+    let width = 1
+    const { container } = this.refs
+    if (container) {
+      const containerRect = container.getBoundingClientRect()
+      width = Math.round(containerRect.width - margin.left - margin.right)
+    }
     const activesHeight = 72
     const yActives = d3.scaleLinear().domain([Math.max(quota / d3.sum(schedule, step => step.type === "discard"? 0 : 1), d3.max(actives, d => d.value)), 0]).range([0, activesHeight])
     const completesHeight = activesHeight - yActives(d3.max(completes, d => d.value))
@@ -55,12 +57,22 @@ export default class RetriesHistogram extends Component {
     return {actives, completes, schedule, width, activesHeight, completesHeight, x, yActives, yCompletes, timewindows}
   }
 
+
   componentDidMount() {
+    window.addEventListener('resize', this.calculateSize)
+    this.setState(this.calculateSize())
     this.renderD3(true)
   }
 
   componentDidUpdate() {
     this.renderD3()
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.calculateSize)
+  }
+  componentWillReceiveProps() {
+    this.setState(this.calculateSize())
   }
 
   handleMouseOver(e) {
@@ -125,7 +137,7 @@ export default class RetriesHistogram extends Component {
     const hours = position >= duration? 24-position : duration-position
 
     return (
-      <div className="retriesHistogram" style={{width:width+margin.left+margin.right}} >
+      <div className="retriesHistogram" ref="container" >
         <svg ref="svg" width={width+margin.left+margin.right} height={activesHeight+completesHeight+margin.top+margin.bottom+padding}>
           <g transform={`translate(${margin.left},${margin.top})`}>
             <g ref="actives">

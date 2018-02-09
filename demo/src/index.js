@@ -204,7 +204,7 @@ class Demo extends Component {
             <div className="title">Retries histogram</div>
             <div className="description">Number of contacts in each stage of the retry schedule</div>
           </div>
-          <RetriesHistogram quota={quota} schedule={schedule} actives={actives} completes={completes} width={width*2} weight={24} duration={duration} position={position} time={new Date(2017, 8, 22, 6+position)} scheduleWindow={"Contact schedule window 6:00 AM to 6:00 PM"} references={this.state.retriesHistogramReferences}/>
+          <RetriesHistogram quota={quota} schedule={schedule} actives={actives} completes={completes} duration={duration} position={position} time={new Date(2017, 8, 22, 6+position)} scheduleWindow={"Contact schedule window 6:00 AM to 6:00 PM"} references={this.state.retriesHistogramReferences}/>
         </div>
         <hr></hr>
         <div className="double">
