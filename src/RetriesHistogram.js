@@ -8,7 +8,7 @@ const fix = -1
 export default class RetriesHistogram extends Component {
   constructor(props) {
     super(props)
-    this.recalculate = this.calculateSize.bind(this)
+    this.calculateSize = this.calculateSize.bind(this)
     this.state = this.calculateSize()
   }
 
@@ -131,7 +131,7 @@ export default class RetriesHistogram extends Component {
   }
 
   render() {
-    const {references,duration, position, time, scheduleWindow} = this.props
+    const {references, duration, position, time, scheduleWindow} = this.props
     const {width, completesHeight, activesHeight, schedule, actives, completes, x, yActives, yCompletes, timewindows} = this.state
     const padding = 6
     const hours = position >= duration? 24-position : duration-position
@@ -144,7 +144,6 @@ export default class RetriesHistogram extends Component {
               {
                 actives.map((slot, index) => {
 
-                let {position, duration} = this.props
                 let isFix = slot.value === fix
                 let isDiscard = schedule.some(step => step.offset === index && step.type === "discard")
                 let isTrying = schedule.some(step => step.offset === index) && position < duration
@@ -186,7 +185,6 @@ export default class RetriesHistogram extends Component {
             <g ref="schedule"transform={`translate(${x.step()/2},${-margin.top/2})`}>
               {
                 schedule.map((step, index) => {
-                  const {position, duration} = this.props
                   let isDiscard = step.type === "discard" && actives[step.offset].value
                   let isTrying = actives[step.offset].value > 0 && position < duration
                   let state = (isDiscard? "red" : (isTrying? "trying" : ""))
