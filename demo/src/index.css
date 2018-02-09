@@ -8,6 +8,8 @@ body {
 }
 
 .app {
+  width: 80vw;
+  overflow: hidden;
   background: #fff;
   display: inline-block;
   padding: 60px 30px;
