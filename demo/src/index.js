@@ -213,7 +213,7 @@ class Demo extends Component {
               <div className="title">Success rate</div>
               <div className="description">Estimated by combining initial and current values</div>
             </div>
-            <SuccessRate initial={initial} actual={actual} estimated={successRate} progress={(quota-pending)/quota} width={650} height={325} weight={24}/>
+            <SuccessRate initial={initial} actual={actual} estimated={successRate} progress={(quota-pending)/quota} weight={24}/>
           </div>
           <div>
             <div className="header">
