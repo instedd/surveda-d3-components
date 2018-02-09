@@ -7,26 +7,34 @@ const margin = {left:36, top:18, right:18, bottom:36}
 export default class Forecasts extends Component {
   constructor(props) {
     super(props)
-    this.state = this.calculateSize(props)
+    this.recalculate = this.recalculate.bind(this)
+    this.state = {
+      width: 0,
+      height: 0
+    }
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState(this.calculateSize(nextProps))
-  }
+  recalculate() {
+    const { container } = this.refs
 
-  calculateSize(props) {
-    var {width, height} = this.props
-    width -= margin.left + margin.right
-    height -= margin.top + margin.bottom
-    return {width, height}
+    const width = Math.round(window.innerWidth * 0.8)
+    const height = Math.round(width/2)
+
+    this.setState({width, height})
   }
 
   componentDidMount() {
+    window.addEventListener('resize', this.recalculate)
+    this.recalculate()
     this.renderD3(true)
   }
 
   componentDidUpdate() {
     this.renderD3()
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.recalculate)
   }
 
   renderD3(initial=false) {
@@ -89,7 +97,7 @@ export default class Forecasts extends Component {
     const padding = 6
 
     return (
-      <div className="forecasts" style={{width:width+margin.left+margin.right}} >
+      <div className="forecasts" ref='container'>
         <svg ref="svg" width={width+margin.left+margin.right} height={height+margin.top+margin.bottom+padding}>
           <g transform={`translate(${margin.left},${margin.top})`}>
             <g ref="grid"/>

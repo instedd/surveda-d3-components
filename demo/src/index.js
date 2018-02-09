@@ -194,7 +194,7 @@ class Demo extends Component {
               <div className="description">Count partials as completed</div>
             </div>
             <Stats data={stats}/>
-            <Forecasts data={forecasts} width={width*2} height={height}/>
+            <Forecasts data={forecasts}/>
           </div>
           <hr></hr>
           {/*<div>
