@@ -109,7 +109,8 @@ export default class Forecasts extends Component {
           </g>
         </svg>
         <div className="bottom">
-          <div className="status"><span className="icon">event</span> 3 weeks to complete all quotas</div>
+          <div />
+          {/*<div className="status"><span className="icon">event</span> 3 weeks to complete all quotas</div>*/}
           <References data={data.map(serie => ({label: serie.label, color:serie.color}))}/>
         </div>
       </div>
