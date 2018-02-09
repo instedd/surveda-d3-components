@@ -186,45 +186,41 @@ class Demo extends Component {
   render() {
     const {actives, completes, pending, successRate, initial, actual, quota, stats, position, duration, width, height, forecasts, schedule} = this.state
     return (
-      <div>
-        <div className="app">
+      <div className="app">
+        <div className="header">
+          <div className="title">Percent of completes</div>
+          <div className="description">Count partials as completed</div>
+        </div>
+        <Stats data={stats}/>
+        <Forecasts data={forecasts}/>
+        <hr></hr>
+        {/*<div>
+          <button onClick={() => this.next()}>Next</button>
+          <button onClick={() => this.start()}>Start</button>
+          <button onClick={() => this.stop()}>Stop</button>
+        </div>*/}
+        <div>
+          <div className="header">
+            <div className="title">Retries histogram</div>
+            <div className="description">Number of contacts in each stage of the retry schedule</div>
+          </div>
+          <RetriesHistogram quota={quota} schedule={schedule} actives={actives} completes={completes} width={width*2} weight={24} duration={duration} position={position} time={new Date(2017, 8, 22, 6+position)} scheduleWindow={"Contact schedule window 6:00 AM to 6:00 PM"} references={this.state.retriesHistogramReferences}/>
+        </div>
+        <hr></hr>
+        <div className="double">
           <div>
             <div className="header">
-              <div className="title">Percent of completes</div>
-              <div className="description">Count partials as completed</div>
+              <div className="title">Success rate</div>
+              <div className="description">Estimated by combining initial and current values</div>
             </div>
-            <Stats data={stats}/>
-            <Forecasts data={forecasts}/>
+            <SuccessRate initial={initial} actual={actual} estimated={successRate} progress={(quota-pending)/quota} width={650} height={325} weight={24}/>
           </div>
-          <hr></hr>
-          {/*<div>
-            <button onClick={() => this.next()}>Next</button>
-            <button onClick={() => this.start()}>Start</button>
-            <button onClick={() => this.stop()}>Stop</button>
-          </div>*/}
           <div>
             <div className="header">
-              <div className="title">Retries histogram</div>
-              <div className="description">Number of contacts in each stage of the retry schedule</div>
+              <div className="title">Queue size</div>
+              <div className="description">Amount of respondents that are estimated we need to contact to reach the target completes.<br/>It increases when the success rate decreases and viceversa.</div>
             </div>
-            <RetriesHistogram quota={quota} schedule={schedule} actives={actives} completes={completes} width={width*2} weight={24} duration={duration} position={position} time={new Date(2017, 8, 22, 6+position)} scheduleWindow={"Contact schedule window 6:00 AM to 6:00 PM"} references={this.state.retriesHistogramReferences}/>
-          </div>
-          <hr></hr>
-          <div className="double">
-            <div>
-              <div className="header">
-                <div className="title">Success rate</div>
-                <div className="description">Estimated by combining initial and current values</div>
-              </div>
-              <SuccessRate initial={initial} actual={actual} estimated={successRate} progress={(quota-pending)/quota} width={650} height={325} weight={24}/>
-            </div>
-            <div>
-              <div className="header">
-                <div className="title">Queue size</div>
-                <div className="description">Amount of respondents that are estimated we need to contact to reach the target completes.<br/>It increases when the success rate decreases and viceversa.</div>
-              </div>
-              <QueueSize completes={quota-pending} pending={pending} needed={pending*Math.ceil(1/successRate)} missing={0} successRate={successRate} multiplier={Math.ceil(1/successRate)} width={650} height={310} weight={24}/>
-            </div>
+            <QueueSize completes={quota-pending} pending={pending} needed={pending*Math.ceil(1/successRate)} missing={0} successRate={successRate} multiplier={Math.ceil(1/successRate)} width={650} height={310} weight={24}/>
           </div>
         </div>
       </div>
