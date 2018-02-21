@@ -42,8 +42,20 @@ export default class Forecasts extends Component {
     const {data} = this.props
     const {width, height} = this.state
     const flatten = Array.prototype.concat(...data.map(d => [...d.values, ...d.forecast]))
-    const x = d3.scaleTime().domain(d3.extent(flatten, d => d.time)).range([0, width])
-    const y = d3.scaleLinear().domain([d3.max(flatten, d => d.value), 0]).range([0, height])
+
+    let initialTime, lastTime
+
+    if (!flatten || flatten.length < 1) {
+      initialTime = new Date()
+      lastTime = d3.timeMonth.offset(initialTime, 3)
+    } else {
+      initialTime = d3.min(flatten, d => d.time)
+      lastTime = d3.timeMonth.offset(initialTime, 3)
+      lastTime = d3.max([d3.max(flatten, d => d.time), lastTime])
+    }
+
+    const x = d3.scaleTime().domain([initialTime, lastTime]).range([0, width])
+    const y = d3.scaleLinear().domain([0, d3.max([d3.max(flatten, d => d.value), 100])]).range([height, 0])
     const line = d3.line()
       .x(d => x(d.time))
       .y(d => y(d.value))
