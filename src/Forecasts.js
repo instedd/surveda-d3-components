@@ -38,8 +38,26 @@ export default class Forecasts extends Component {
     window.removeEventListener('resize', this.recalculate)
   }
 
+  getForecast(firstValue, lastValue, ceil) {
+    const slope = lastValue.value / ( lastValue.time - firstValue.time)
+    return [lastValue, {value: ceil, time: new Date(firstValue.time.getTime() + (ceil / slope))}]
+  }
+
   renderD3(initial=false) {
-    const {data} = this.props
+    let {data, ceil, forecast} = this.props
+    data = data.map(d => {
+      if(
+        forecast
+        && d.values.length > 1
+        && ceil > d.values[d.values.length-1].value > d.values[0].value
+        && d.values[0].time < d.values[d.values.length-1].time
+      ) {
+        return {...d, forecast: this.getForecast(d.values[0], d.values[d.values.length-1], ceil)}
+      } else {
+        return {...d, forecast: []}
+      }
+    })
+
     const {width, height} = this.state
     const flatten = Array.prototype.concat(...data.map(d => [...d.values, ...d.forecast]))
 
@@ -47,15 +65,15 @@ export default class Forecasts extends Component {
 
     if (!flatten || flatten.length < 1) {
       initialTime = new Date()
-      lastTime = d3.timeMonth.offset(initialTime, 3)
+      lastTime = d3.timeMonth.offset(initialTime, 1)
     } else {
       initialTime = d3.min(flatten, d => d.time)
-      lastTime = d3.timeMonth.offset(initialTime, 3)
+      lastTime = d3.timeMonth.offset(initialTime, 1)
       lastTime = d3.max([d3.max(flatten, d => d.time), lastTime])
     }
 
     const x = d3.scaleTime().domain([initialTime, lastTime]).range([0, width])
-    const y = d3.scaleLinear().domain([0, d3.max([d3.max(flatten, d => d.value), 100])]).range([height, 0])
+    const y = d3.scaleLinear().domain([0, d3.max([d3.max(flatten, d => d.value), ceil])]).range([height, 0])
     const line = d3.line()
       .x(d => x(d.time))
       .y(d => y(d.value))

@@ -141,13 +141,12 @@ class Demo extends Component {
     const duration = 12
     const start = new Date()
     const today = new Date(start.getTime() + Math.random() * 45 * 24 * 60 * 60 * 1000)
-    const forecastsReferences = [{label:"Female 18 - 34", color:"#673ab7"}, {label: "Female 35 - 49", color:"#009688"}, {label:"Male 18 - 34", color:"#ffc107"}, {label: "Male 35 - 49", color: "#ff5722"}]
-    const forecasts = forecastsReferences.map(d => {
-      const values = this.getValues(start, today)
-      const initial = values.length? values[values.length-1].value : 0
-      const forecast = this.getForecast(today, new Date(today.getTime() + Math.round(Math.random() * 50 * 24 * 60 * 60 * 1000)), initial)
-      return {...d, values, forecast}
-    })
+    const forecasts = [
+      {label: "Female 18 - 34", color: "#673ab7", values: this.getValues(start, today)},
+      {label: "Female 35 - 49", color: "#009688", values: this.getValues(start, today)},
+      {label: "Male 18 - 34", color: "#ffc107", values: this.getValues(start, today)},
+      {label: "Male 35 - 49", color: "#ff5722", values: this.getValues(start, today)}
+    ]
     const stats = [
       {value:quota, label:"Target"},
       {value:0, label:"Completes"},
@@ -165,22 +164,16 @@ class Demo extends Component {
   getValues(start, today) {
     const days = d3.timeDays(start, today, 1)
     var value = 0
-    const values = days.map(time => {
-      value += Math.round(Math.random() * 50)
-      return {time, value}
-    })
+    let values = days.reduce((result, time) => {
+      if(value == 100) {
+        return result
+      } else {
+        value += Math.round(Math.random() * 4)
+        value = d3.min([value, 100])
+        return [...result, {time, value}]
+      }
+    }, [{time: days.shift(), value: 0}])
     return values
-  }
-
-  getForecast(today, end, initial) {
-    const days = d3.timeDays(new Date(today.getTime() - 24 * 60 * 60 * 1000), end, 1)
-    var value = initial
-    const forecast = days.map(time => {
-      var item = {time, value}
-      value += Math.round(Math.random() * 50)
-      return item
-    })
-    return forecast
   }
 
   render() {
@@ -192,7 +185,7 @@ class Demo extends Component {
           <div className="description">Count partials as completed</div>
         </div>
         <Stats data={stats}/>
-        <Forecasts data={forecasts}/>
+        <Forecasts data={forecasts} ceil={100} forecast={true}/>
         <hr></hr>
         {/*<div>
           <button onClick={() => this.next()}>Next</button>
