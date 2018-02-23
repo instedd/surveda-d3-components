@@ -1,17 +1,45 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
 import { References } from '.'
+import TimeAgo from 'react-timeago'
 
 const margin = {left:36, top:18, right:18, bottom:36}
 
 export default class Forecasts extends Component {
   constructor(props) {
     super(props)
+
     this.recalculate = this.recalculate.bind(this)
+    const data = this.forecast(props)
     this.state = {
       width: 0,
-      height: 0
+      height: 0,
+      data: data,
+      forecastEndDate: this.getForecastEndDate(data, props)
     }
+  }
+
+  forecast(props) {
+    let {data, ceil, forecast} = props
+    return data.map(d => {
+      if(this.shouldForecast(d, ceil, forecast)) {
+        return {...d, forecast: this.getForecast(d.values[0], d.values[d.values.length-1], ceil)}
+      } else {
+        return {...d, forecast: []}
+      }
+    })
+  }
+
+  getForecastEndDate(data, props) {
+    const {ceil, forecast} = this.props
+    return d3.max(data, d => this.shouldForecast(d, ceil, forecast) ? d.values[d.values.length - 1].time : null)
+  }
+
+  shouldForecast(data, ceil, forecast) {
+    return forecast
+      && data.values.length > 1
+      && ceil > data.values[data.values.length-1].value > data.values[0].value
+      && data.values[0].time < data.values[data.values.length-1].time
   }
 
   recalculate() {
@@ -34,6 +62,11 @@ export default class Forecasts extends Component {
     this.renderD3()
   }
 
+  componentWillReceiveProps(props) {
+    const data = this.forecast(props)
+    this.setState({data: data, forecastEndDate: this.getForecastEndDate(data, props)})
+  }
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.recalculate)
   }
@@ -44,21 +77,8 @@ export default class Forecasts extends Component {
   }
 
   renderD3(initial=false) {
-    let {data, ceil, forecast} = this.props
-    data = data.map(d => {
-      if(
-        forecast
-        && d.values.length > 1
-        && ceil > d.values[d.values.length-1].value > d.values[0].value
-        && d.values[0].time < d.values[d.values.length-1].time
-      ) {
-        return {...d, forecast: this.getForecast(d.values[0], d.values[d.values.length-1], ceil)}
-      } else {
-        return {...d, forecast: []}
-      }
-    })
-
-    const {width, height} = this.state
+    const {ceil, forecast} = this.props
+    const {width, height, data} = this.state
     const flatten = Array.prototype.concat(...data.map(d => [...d.values, ...d.forecast]))
 
     let initialTime, lastTime
@@ -123,7 +143,7 @@ export default class Forecasts extends Component {
   }
 
   render() {
-    const {data} = this.props
+    const {data, forecastEndDate} = this.state
     const {width, height} = this.state
     const padding = 6
 
@@ -140,7 +160,9 @@ export default class Forecasts extends Component {
         </svg>
         <div className="bottom">
           <div />
-          {/*<div className="status"><span className="icon">event</span> 3 weeks to complete all quotas</div>*/}
+          { forecastEndDate
+            ? <div className="status"><span className="icon">event</span><TimeAgo minPeriod='10' date={forecastEndDate} /></div>
+            : ''}
           <References data={data.map(serie => ({label: serie.label, color:serie.color}))}/>
         </div>
       </div>

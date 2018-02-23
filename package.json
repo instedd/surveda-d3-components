@@ -22,12 +22,14 @@
     "d3": "^4.0.0"
   },
   "peerDependencies": {
-    "react": "16.x"
+    "react": "16.x",
+    "react-timeago": "^3.4.3"
   },
   "devDependencies": {
     "nwb": "0.21.x",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.2.0",
+    "react-timeago": "^3.4.3"
   },
   "author": "",
   "homepage": "",
