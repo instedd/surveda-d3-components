@@ -39,7 +39,7 @@ export default class Forecasts extends Component {
   }
 
   getForecast(firstValue, lastValue, ceil) {
-    const slope = lastValue.value / ( lastValue.time - firstValue.time)
+    const slope = (lastValue.value - firstValue.value) / ( lastValue.time - firstValue.time)
     return [lastValue, {value: ceil, time: new Date(firstValue.time.getTime() + (ceil / slope))}]
   }
 
