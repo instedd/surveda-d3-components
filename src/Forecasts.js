@@ -38,7 +38,8 @@ export default class Forecasts extends Component {
   shouldForecast(data, ceil, forecast) {
     return forecast
       && data.values.length > 1
-      && ceil > data.values[data.values.length-1].value > data.values[0].value
+      && ceil > data.values[data.values.length-1].value
+      && data.values[data.values.length-1].value > data.values[0].value
       && data.values[0].time < data.values[data.values.length-1].time
   }
 
