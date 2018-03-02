@@ -1,6 +1,6 @@
 {
   "name": "@instedd/surveda-d3-components",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Surveda D3 React components",
   "main": "lib/index.js",
   "module": "es/index.js",
