@@ -90,7 +90,7 @@
   fill: #f44336;
 }
 
-.queueSize .progress {
+.queueSize .queueProgress {
   fill: #4caf50;
 }
 
@@ -287,7 +287,7 @@
 }
 
 .successRate .percent {
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .successRate .percent.large {

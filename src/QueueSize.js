@@ -78,9 +78,9 @@ export default class QueueSize extends Component {
           <g transform={`translate(${margin.top}, ${margin.left})`}>
             <g transform={`translate(${width/2},0)`}>
                 <g transform={`translate(${-(pending+completes)*scale/2},0)`}>
-                  <rect width={completes*scale} height={weight} className="progress"/>
+                  <rect width={completes*scale} height={weight} className="queueProgress"/>
                   <rect width={pending*scale} height={weight} x={completes*scale} className="background"/>
-                  <text x={-offset} y={weight/2} className="progress label end">{completes} Completes</text>
+                  <text x={-offset} y={weight/2} className="queueProgress label end">{completes} Completes</text>
                   <text x={(pending+completes)*scale+offset} y={weight/2} className="background label start">{pending} Pending</text>
                 </g>
                 <path style={{display:needed? "auto":"none"}} className="dottedLine" d={this.connector(left.x1, left.y1, left.x2, left.y2, weight-(left.x1 > left.x2 && right.x1 > right.x2?corner:0), corner)}/>
@@ -93,7 +93,7 @@ export default class QueueSize extends Component {
             </g>
             <g transform={`translate(0,${height-weight})`}>
                 <rect width={needed*scale} height={weight} x={(width-needed*scale)/2}/>
-                {missing? <rect className="missing" width={missing*scale} height={weight} x={width-missing*scale} />:null}
+                {missing? <rect className="missing" width={missing*scale} height={weight} x={(width-missing*scale) - (width-needed*scale)/2} />:null}
             </g>
           </g>
         </svg>
