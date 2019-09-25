@@ -33,6 +33,14 @@ export default class SuccessRate extends Component {
     window.removeEventListener('resize', this.recalculate)
   }
 
+  numberFormat(number){
+    return  number < 0.1? d3.format(".1%")(number) : d3.format(".0%")(number)
+  }
+
+  labelFormat(number){
+    return  number > 0 && number < 1 ? d3.format(".2f")(number) : d3.format(".0f")(number)
+  }
+
   render() {
     const {progress, weight, initial, actual, estimated} = this.props
     const width = this.state.width - margin.left - margin.right
@@ -48,8 +56,8 @@ export default class SuccessRate extends Component {
             <g transform={`translate(${arcRadius},${arcRadius})`}>
               <g ref="line" transform={`rotate(${180*progress})`}>
                 <path className="dottedLine" d={`M${-donutRadius} 0 h${-arcRadius+donutRadius+weight}`}/>
-                <text ref="backgroundLabel" className="initial label" transform={`translate(${-arcRadius-offset}, 0) rotate(-90)`}>{d3.format(".2f")(1-progress)}</text>
-                <text ref="foregroundLabel" className="actual label hanging" transform={`translate(${weight-arcRadius+offset}, 0) rotate(-90)`}>{d3.format(".2f")(progress)}</text>
+                <text ref="backgroundLabel" className="initial label" transform={`translate(${-arcRadius-offset}, 0) rotate(-90)`}>{this.labelFormat(1-progress)}</text>
+                <text ref="foregroundLabel" className="actual label hanging" transform={`translate(${weight-arcRadius+offset}, 0) rotate(-90)`}>{this.labelFormat(progress)}</text>
               </g>
             </g>
             <path className="initial" d={`M0 ${arcRadius}
@@ -64,21 +72,21 @@ export default class SuccessRate extends Component {
                                                         z`}/>
             <text className="icon" x={arcRadius} y={arcRadius/2 + margin.bottom * 3}>info_outline</text>
             <text x={arcRadius} y={arcRadius/2 + margin.bottom} className="label">estimated success rate</text>
-            <text x={arcRadius} y={arcRadius/2} className="percent large">{d3.format(".1%")(estimated)}</text>
+            <text x={arcRadius} y={arcRadius/2} className="percent large">{this.numberFormat(estimated)}</text>
             <g ref="progress" transform={`translate(${arcRadius-donutRadius},${arcRadius-donutRadius})`}>
                 <Donut value={progress} width={donutRadius*2} height={donutRadius} color="progress" weight="24" semi/>
                 <text x={donutRadius} y={donutRadius} className="progress label">Progress</text>
-                <text x={donutRadius} y={donutRadius-margin.bottom} className="progress percent">{d3.format(".1%")(progress)}</text>
+                <text x={donutRadius} y={donutRadius-margin.bottom} className="progress percent">{this.numberFormat(progress)}</text>
             </g>
             <g ref="initial" transform={`translate(${(weight+arcRadius-donutRadius)/2-donutRadius/2},${arcRadius-donutRadius-margin.bottom})`}>
                 <Donut value={initial} width={donutRadius} height={donutRadius} color="initial" weight="12" />
                 <text x={donutRadius/2} y={donutRadius + margin.bottom} className="initial label">initial success rate</text>
-                <text x={donutRadius/2} y={donutRadius/2} className="initial percent middle">{d3.format(".1%")(initial)}</text>
+                <text x={donutRadius/2} y={donutRadius/2} className="initial percent middle">{this.numberFormat(initial)}</text>
             </g>
             <g ref="actual" transform={`translate(${(arcRadius*3+donutRadius-weight)/2-donutRadius/2},${arcRadius-donutRadius-margin.bottom})`}>
                 <Donut value={actual} width={donutRadius} height={donutRadius} color="actual" weight="12" />
                 <text x={donutRadius/2} y={donutRadius + margin.bottom} className="actual label">Actual success rate</text>
-                <text x={donutRadius/2} y={donutRadius/2} className="actual percent middle">{d3.format(".1%")(actual)}</text>
+                <text x={donutRadius/2} y={donutRadius/2} className="actual percent middle">{this.numberFormat(actual)}</text>
             </g>
           </g>
         </svg>
