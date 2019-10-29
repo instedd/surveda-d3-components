@@ -19,7 +19,8 @@
     "test:watch": "nwb test-react --server"
   },
   "dependencies": {
-    "d3": "^4.0.0"
+    "d3": "^4.0.0",
+    "react-tooltip": "^3.11.1"
   },
   "peerDependencies": {
     "react": "16.x",

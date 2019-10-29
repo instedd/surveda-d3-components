@@ -54,3 +54,17 @@ body {
 .double > * {
   width: 50%;
 }
+
+.tooltip {
+  background-color: rgba(0,0,0,0.85) !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-size: 11px !important;
+  height: 12px !important;
+  padding: 4px 8px !important;
+  border-radius: 2px !important;
+  border: 0 !important;
+}
+
+.tooltip.place-top:after {
+  border-top-style: hidden !important;
+}

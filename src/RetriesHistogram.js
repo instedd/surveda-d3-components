@@ -13,11 +13,8 @@ export default class RetriesHistogram extends Component {
   }
 
   calculateSize() {
-    const {duration, position, quota} = this.props
-    const schedule = this.props.schedule.map(step => ({...step, delay:Math.ceil(step.delay)}))
-    const timewindows = this.props.actives.map(slot => false)
-    const actives = this.props.actives.map(slot => ({...slot}))
-    const completes = this.props.completes.map(slot => ({...slot}))
+    const {quota, timewindows, actives, completes} = this.props
+    const flow = this.props.flow.map(step => ({...step, delay:Math.ceil(step.delay)}))
     let width = 1
     const { container } = this.refs
     if (container) {
@@ -25,36 +22,12 @@ export default class RetriesHistogram extends Component {
       width = Math.round(containerRect.width - margin.left - margin.right)
     }
     const activesHeight = 72
-    const yActives = d3.scaleLinear().domain([Math.max(quota / d3.sum(schedule, step => step.type === "discard"? 0 : 1), d3.max(actives, d => d.value)), 0]).range([0, activesHeight])
+    const yActives = d3.scaleLinear().domain([Math.max(quota / d3.sum(flow, step => step.type === "discard"? 0 : 1), d3.max(actives, d => d.value)), 0]).range([0, activesHeight])
     const completesHeight = activesHeight - yActives(d3.max(completes, d => d.value))
     const yCompletes = d3.scaleLinear().domain([d3.max(completes, d => d.value), 0]).range([0, completesHeight])
-    const percent = 84 / width
-    const delay = d3.sum(schedule, step => step.delay) * percent
-    const count = d3.sum(schedule, step => step.delay < delay && step.delay? 1 : 0)
-    const valid = d3.sum(schedule, step => step.delay > delay? step.delay : 0)
-    const min = Math.ceil(valid * percent / (1 - percent * count))
+    const x = d3.scaleBand().domain(d3.range(0, d3.sum(flow, step => step.delay)+1, 1)).rangeRound([0, width]).padding(0.1)
 
-    var offset = 0
-    schedule.forEach(step => {
-      let start = step.offset
-      let end = step.offset-Math.max(1, step.delay)
-      let length = step.delay? Math.max(0, min-step.delay) : 0
-      step.delay += length
-      offset += step.delay
-      step.offset = offset
-      for (let i = start, j = position; i > end; i--, j++) {
-        timewindows[i] = step.type === "discard" || j % 24 < duration
-      }
-      if(length) {
-        let insert = step.offset-step.delay+1
-        timewindows.splice(insert, 0, ...new Array(length).fill(timewindows[insert]))
-        actives.splice(insert, 0, ...new Array(length).fill({value:fix}))
-        completes.splice(insert, 0, ...new Array(length).fill({value:fix}))
-      }
-    })
-    const x = d3.scaleBand().domain(d3.range(0, d3.sum(schedule, step => step.delay)+1, 1)).rangeRound([0, width]).padding(0.1)
-
-    return {actives, completes, schedule, width, activesHeight, completesHeight, x, yActives, yCompletes, timewindows}
+    return {actives, completes, flow, width, activesHeight, completesHeight, x, yActives, yCompletes, timewindows}
   }
 
 
@@ -73,10 +46,6 @@ export default class RetriesHistogram extends Component {
   }
   componentWillReceiveProps() {
     this.setState(this.calculateSize())
-  }
-
-  handleMouseOver(e) {
-    console.log(e.target.getAttribute("data"))
   }
 
   renderD3(initial=false) {
@@ -131,10 +100,10 @@ export default class RetriesHistogram extends Component {
   }
 
   render() {
-    const {references, duration, position, time, scheduleWindow} = this.props
-    const {width, completesHeight, activesHeight, schedule, actives, completes, x, yActives, yCompletes, timewindows} = this.state
+    const {references, scheduleDescription} = this.props
+    const {width, completesHeight, activesHeight, flow, actives, completes, x, yActives, yCompletes, timewindows} = this.state
     const padding = 6
-    const hours = position >= duration? 24-position : duration-position
+    const format = d3.format(",")
 
     return (
       <div className="retriesHistogram" ref="container" >
@@ -145,8 +114,8 @@ export default class RetriesHistogram extends Component {
                 actives.map((slot, index) => {
 
                 let isFix = slot.value === fix
-                let isDiscard = schedule.some(step => step.offset === index && step.type === "discard")
-                let isTrying = schedule.some(step => step.offset === index) && position < duration
+                let isDiscard = flow.some(step => step.offset === index && step.type === "discard")
+                let isTrying = flow.some(step => step.offset === index && timewindows[step.offset])
                 let className = "bar " + (isFix? "fix" : (isDiscard? "red" : (isTrying? "trying" : "standby")))
 
                   return (<rect key={index}
@@ -155,8 +124,7 @@ export default class RetriesHistogram extends Component {
                                 y={slot.value === fix? 0 : yActives(slot.value)}
                                 width={slot.value === fix? x.step() : x.bandwidth()}
                                 height={slot.value === fix? activesHeight : activesHeight - yActives(slot.value)}
-                                data={slot.id}
-                                onMouseEnter={slot.value === fix? null : this.handleMouseOver}/>)
+                                data-tip={format(slot.value)}/>)
                 })
               }
             </g>
@@ -175,6 +143,7 @@ export default class RetriesHistogram extends Component {
                                 className="bar complete"
                                 x={x(index)}
                                 y={slot.value === fix? completesHeight : yCompletes(slot.value)}
+                                data-tip={format(slot.value)}
                                 width={x.bandwidth()}
                                 height={slot.value === fix? 0 : completesHeight - yCompletes(slot.value)}/>)
                 })
@@ -182,11 +151,11 @@ export default class RetriesHistogram extends Component {
             </g>
             <g ref="axis" transform={`translate(${x(0)},0)`}/>
             <g ref="grid" transform={`translate(${x(0)},-1)`}/>
-            <g ref="schedule"transform={`translate(${x.step()/2},${-margin.top/2})`}>
+            <g ref="flow"transform={`translate(${x.step()/2},${-margin.top/2})`}>
               {
-                schedule.map((step, index) => {
-                  let isDiscard = step.type === "discard" && actives[step.offset].value
-                  let isTrying = actives[step.offset].value > 0 && position < duration
+                flow.map((step, index) => {
+                  let isDiscard = step.type === "discard" && actives[step.offset].value > 0
+                  let isTrying = actives[step.offset].value > 0 && timewindows[step.offset]
                   let state = (isDiscard? "red" : (isTrying? "trying" : ""))
                   return (<g key={index} transform={`translate(${x(step.offset)},0)`}>
                     <text className={`icon ${state}`}>{this.icon(step.type)}</text>
@@ -198,7 +167,7 @@ export default class RetriesHistogram extends Component {
           </g>
         </svg>
         <div className="bottom">
-          <div className="status"><span className="icon">access_time</span>{`${d3.timeFormat("%I:%M %p")(time)} ${position >= duration? "starts":"ends"} in ${hours} hour${hours === 1? "" : "s"} (${scheduleWindow} ${d3.timeFormat("GMT%Z")(time)}) `}</div>
+          <div className="status"><span className="icon">access_time</span>{`${scheduleDescription}`}</div>
           <References data={references}/>
         </div>
       </div>

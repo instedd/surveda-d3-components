@@ -1,5 +1,6 @@
 import * as d3 from 'd3'
 import React, { Component } from 'react'
+import ReactTooltip from 'react-tooltip'
 import {render} from 'react-dom'
 import { SuccessRate, QueueSize, RetriesHistogram, Forecasts, Stats } from '../../src'
 import './index.css'
@@ -7,6 +8,8 @@ import './index.css'
 var interval
 var count = 0
 var id = 0
+const fix = -1
+
 
 class Demo extends Component {
   constructor() {
@@ -54,18 +57,18 @@ class Demo extends Component {
   }
 
   nextHour() {
-    const {actives, completes, duration, schedule, successRate, quota, totalCalls} = this.state
+    const {actives, completes, duration, flow, successRate, quota, totalCalls} = this.state
     var {position, pending, mean, dynamic, stats} = this.state
     if(dynamic) {
       mean = d3.mean(actives.filter(d => d && d.value > 0), d => d.value)
     }
     if(position < duration) {
-      schedule.forEach((step, i, array) => {
+      flow.forEach((step, i, array) => {
         if(actives[step.offset]) {
           switch(step.type) {
             case "sms":
               for (let i = step.offset, j = 1; i < actives.length - 1; i++, j++) {
-                let done = Math.min(pending, Math.ceil(actives[i].value * successRate / d3.sum(schedule, step => step.type === "discard"? 0 : 1) / j))
+                let done = Math.min(pending, Math.ceil(actives[i].value * successRate / d3.sum(flow, step => step.type === "discard"? 0 : 1) / j))
                 actives[i].value -= done
                 completes[i].value += done
                 pending -= done
@@ -73,11 +76,11 @@ class Demo extends Component {
             break
             case "voice":
               if(step.offset) {
-                let selection = Math.min((1 + Math.random()) * mean, actives[step.offset].value)
+                let selection = Math.ceil(Math.min((1 + Math.random()) * mean, actives[step.offset].value))
                 actives[step.offset - 1].value += actives[step.offset].value - selection
                 actives[step.offset].value = selection
               }
-              let done = Math.min(pending, Math.ceil(actives[step.offset].value * successRate / d3.sum(schedule, step => step.type === "discard"? 0 : 1)))
+              let done = Math.min(pending, Math.ceil(actives[step.offset].value * successRate / d3.sum(flow, step => step.type === "discard"? 0 : 1)))
               actives[step.offset].value -= done
               completes[step.offset].value += done
               pending -= done
@@ -87,7 +90,7 @@ class Demo extends Component {
         }
       })
     } else {
-      schedule.forEach((step, i, array) => {
+      flow.forEach((step, i, array) => {
         switch(step.type) {
           case "discard":
             break
@@ -123,8 +126,7 @@ class Demo extends Component {
   }
 
   getData() {
-    const retriesHistogramReferences = [{label:"Trying", className:"trying"}, {label: "Out of schedule window", className:"out"}, {label:"Completes", className:"complete"}]
-    //const schedule = [{type:"voice", delay:0}, {type:"voice", delay:1/6, label:"10m"}, {type:"sms", delay:24, label:"24h"}, {type:"sms", delay:1/6, label:"10m"}, {type:"discard", delay:26, label:"26h"}]
+    const retriesHistogramReferences = [{label:"Trying", className:"trying"}, {label: "Out of time window", className:"out"}, {label:"Completes", className:"complete"}]
     const quota = 5000
     const pending = 5000
     const initial = 0.02
@@ -133,12 +135,20 @@ class Demo extends Component {
     const progress = 0
     const dynamic = true
     const totalCalls = 0
-    const schedule = [{type:"voice", delay:0}, {type:"voice", delay:10, label:"10h"}, {type:"sms", delay:28, label:"28h"}, {type:"sms", delay:28, label:"28h"}, {type:"discard", delay:28, label:"28h"}]
-    const length = d3.sum(schedule, step => step.delay? Math.ceil(step.delay) : 1)
+    //const flow = [{type:"voice", delay:0}, {type:"voice", delay:1/6, label:"10m"}, {type:"sms", delay:24, label:"24h"}, {type:"sms", delay:1/6, label:"10m"}, {type:"discard", delay:26, label:"26h"}]
+    const flow = [{type:"voice", delay:0}, {type:"voice", delay:10, label:"10h"}, {type:"sms", delay:28, label:"28h"}, {type:"sms", delay:28, label:"28h"}, {type:"discard", delay:28, label:"28h"}]
+    const length = d3.sum(flow, step => step.delay? Math.ceil(step.delay) : 1)
     const actives = Array.from({length}, (d, i) => ({value:0}))
     const completes = Array.from({length}, (d, i) => ({value:0}))
     const position = 0
     const duration = 12
+    const schedule = {
+        blockedDays: [new Date("2019-11-04"), "2019-11-13", "2019-11-22"],
+        dayOfWeek: {mon: true, wed: true, tue: null, thu: false, sun: null, sat: null},
+        endTime: "18:00:00",
+        startTime: "09:00:00",
+        timezone: "America/Buenos_Aires"
+    }
     const start = new Date()
     const today = new Date(start.getTime() + Math.random() * 45 * 24 * 60 * 60 * 1000)
     const forecasts = [
@@ -154,11 +164,11 @@ class Demo extends Component {
       {value:0, label:"Contacted Respondents"}
     ]
     var offset = 0
-    schedule.forEach(step => {
+    flow.forEach(step => {
       offset += step.delay
       step.offset = offset
     })
-    return {stats, schedule, actives, completes, forecasts, retriesHistogramReferences, position, duration, length, quota, pending, initial, actual, successRate, progress, dynamic, totalCalls}
+    return {stats, flow, actives, completes, forecasts, retriesHistogramReferences, position, duration, length, quota, pending, initial, actual, successRate, progress, dynamic, totalCalls}
   }
 
   getValues(start, today) {
@@ -177,7 +187,24 @@ class Demo extends Component {
   }
 
   render() {
-    const {actives, completes, pending, successRate, initial, actual, quota, stats, position, duration, width, height, forecasts, schedule} = this.state
+    const {actives, completes, pending, successRate, initial, actual, quota, stats, position, duration, width, height, forecasts, flow} = this.state
+    const time = new Date(2017, 8, 22, 6+position)
+    const hours = position >= duration? 24-position : duration-position
+    const timewindows = actives.map(slot => false)
+
+    let offset = 0
+    flow.forEach(step => {
+      let start = step.offset
+      let end = step.offset-Math.max(1, step.delay)
+
+      offset += step.delay
+      step.offset = offset
+
+      for (let i = start, j = position; i > end; i--, j++) {
+        timewindows[i] = step.type === "discard" || j % 24 < duration
+      }
+    })
+
     return (
       <div className="app">
         <div className="header">
@@ -195,9 +222,9 @@ class Demo extends Component {
         <div>
           <div className="header">
             <div className="title">Retries histogram</div>
-            <div className="description">Number of contacts in each stage of the retry schedule</div>
+            <div className="description">Number of contacts in each stage of the retry flow</div>
           </div>
-          <RetriesHistogram quota={quota} schedule={schedule} actives={actives} completes={completes} duration={duration} position={position} time={new Date(2017, 8, 22, 6+position)} scheduleWindow={"Contact schedule window 6:00 AM to 6:00 PM"} references={this.state.retriesHistogramReferences}/>
+          <RetriesHistogram quota={quota} flow={flow} actives={actives} completes={completes} timewindows={timewindows} scheduleDescription={`${d3.timeFormat("%I:%M %p")(time)} ${position >= duration? "starts":"ends"} in ${hours} hour${hours === 1? "" : "s"} (Contact time window 9:00 AM to 6:00 PM ${d3.timeFormat("GMT%Z")(time)})`} references={this.state.retriesHistogramReferences}/>
         </div>
         <hr></hr>
         <div className="double">
@@ -216,6 +243,9 @@ class Demo extends Component {
             <QueueSize completes={quota-pending} pending={pending} needed={pending*Math.ceil(1/successRate)} missing={0} successRate={successRate} multiplier={Math.ceil(1/successRate)} weight={24}/>
           </div>
         </div>
+        <ReactTooltip  place="top" type="dark" effect="solid" className="tooltip"/>
+
+        }
       </div>
     );
   }
