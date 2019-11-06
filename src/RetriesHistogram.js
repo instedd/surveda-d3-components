@@ -167,7 +167,7 @@ export default class RetriesHistogram extends Component {
           </g>
         </svg>
         <div className="bottom">
-          <div className="status"><span className="icon">access_time</span>{`${scheduleDescription}`}</div>
+          <div className="status">{scheduleDescription ? <span className="icon">access_time</span>: null}{`${scheduleDescription}`}</div>
           <References data={references}/>
         </div>
       </div>
