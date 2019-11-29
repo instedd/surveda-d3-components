@@ -1,16 +1,25 @@
 # surveda-d3-components
 
-[![Travis][build-badge]][build]
-[![npm package][npm-badge]][npm]
-[![Coveralls][coveralls-badge]][coveralls]
+## Install
 
-Describe surveda-d3-components here.
+```
+docker-compose run --rm node yarn install
+```
 
-[build-badge]: https://img.shields.io/travis/user/repo/master.png?style=flat-square
-[build]: https://travis-ci.org/user/repo
+## Test
 
-[npm-badge]: https://img.shields.io/npm/v/npm-package.png?style=flat-square
-[npm]: https://www.npmjs.org/package/npm-package
+```
+docker-compose run --rm node yarn install
+```
 
-[coveralls-badge]: https://img.shields.io/coveralls/user/repo/master.png?style=flat-square
-[coveralls]: https://coveralls.io/github/user/repo
+## Publish a new version
+
+```
+vim package.json # update version
+git add package.json && git commit -m "Version bump (v1.x.y)"
+git tag v1.x.y
+docker-compose run --rm node yarn run clean
+docker-compose run --rm node yarn run build
+npm publish
+git push --tags
+```
