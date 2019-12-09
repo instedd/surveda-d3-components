@@ -52,7 +52,7 @@ export default class RetriesHistogram extends Component {
     const {x, yActives, actives} = this.state
 
     d3.select(this.refs.axis)
-      .call(d3.axisLeft(yActives).ticks(3).tickSizeInner(0).tickFormat(d3.format(",")))
+      .call(d3.axisLeft(yActives).tickSizeInner(0).tickValues(yActives.ticks(3).filter(tick => Number.isInteger(tick))).tickFormat(d3.format("d")))
       .selectAll("text")
       .attr("fill", null)
       .attr("dy", null)
