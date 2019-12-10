@@ -58,7 +58,7 @@ export default class RetriesHistogram extends Component {
       .attr("dy", null)
 
     d3.select(this.refs.grid)
-      .call(d3.axisRight(yActives).ticks(3).tickSizeInner(actives.length*x.step()-1))
+      .call(d3.axisRight(yActives).ticks(3).tickValues(yActives.ticks(3).filter(tick => Number.isInteger(tick))).tickSizeInner(actives.length*x.step()-1))
       .selectAll("text")
       .remove()
   }
