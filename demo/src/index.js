@@ -1,6 +1,5 @@
 import * as d3 from 'd3'
 import React, { Component } from 'react'
-import ReactTooltip from 'react-tooltip'
 import {render} from 'react-dom'
 import { SuccessRate, QueueSize, RetriesHistogram, Forecasts, Stats } from '../../src'
 import './index.css'
@@ -243,8 +242,6 @@ class Demo extends Component {
             <QueueSize completes={quota-pending} pending={pending} needed={pending*Math.ceil(1/successRate)} missing={0} successRate={successRate} multiplier={Math.ceil(1/successRate)} weight={24}/>
           </div>
         </div>
-        <ReactTooltip  place="top" type="dark" effect="solid" className="tooltip"/>
-
         }
       </div>
     );

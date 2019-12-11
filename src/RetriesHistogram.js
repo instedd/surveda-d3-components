@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
 import { References } from '.'
+import ReactTooltip from 'react-tooltip'
 
 const margin = {left:36, top:36, right:18, bottom:18}
 const fix = -1
@@ -107,6 +108,7 @@ export default class RetriesHistogram extends Component {
 
     return (
       <div className="retriesHistogram" ref="container" >
+        <ReactTooltip  place="top" type="dark" effect="solid" className="tooltip"/>
         <svg ref="svg" width={width+margin.left+margin.right} height={activesHeight+completesHeight+margin.top+margin.bottom+padding}>
           <g transform={`translate(${margin.left},${margin.top})`}>
             <g ref="actives">
