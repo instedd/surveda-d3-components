@@ -80,7 +80,7 @@ export default class QueueSize extends Component {
                 <g transform={`translate(${-(pending+completes)*scale/2},0)`}>
                   <rect width={completes*scale} height={weight} className="queueProgress"/>
                   <rect width={pending*scale} height={weight} x={completes*scale} className="background"/>
-                  <text x={-offset} y={weight/2} className="queueProgress label end">{completes} Completes</text>
+                  <text x={-offset} y={weight/2} className="queueProgress label end">{completes} Exhausted</text>
                   <text x={(pending+completes)*scale+offset} y={weight/2} className="background label start">{pending} Pending</text>
                 </g>
                 <path style={{display:needed? "auto":"none"}} className="dottedLine" d={this.connector(left.x1, left.y1, left.x2, left.y2, weight-(left.x1 > left.x2 && right.x1 > right.x2?corner:0), corner)}/>
