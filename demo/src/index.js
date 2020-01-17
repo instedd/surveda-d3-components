@@ -223,7 +223,7 @@ class Demo extends Component {
             <div className="title">Retries histogram</div>
             <div className="description">Number of contacts in each stage of the retry flow</div>
           </div>
-          <RetriesHistogram quota={quota} flow={flow} actives={actives} completes={completes} timewindows={timewindows} scheduleDescription={`${d3.timeFormat("%I:%M %p")(time)} ${position >= duration? "starts":"ends"} in ${hours} hour${hours === 1? "" : "s"} (Contact time window 9:00 AM to 6:00 PM ${d3.timeFormat("GMT%Z")(time)})`} references={this.state.retriesHistogramReferences}/>
+          <RetriesHistogram flow={flow} actives={actives} completes={completes} timewindows={timewindows} scheduleDescription={`${d3.timeFormat("%I:%M %p")(time)} ${position >= duration? "starts":"ends"} in ${hours} hour${hours === 1? "" : "s"} (Contact time window 9:00 AM to 6:00 PM ${d3.timeFormat("GMT%Z")(time)})`} references={this.state.retriesHistogramReferences}/>
         </div>
         <hr></hr>
         <div className="double">
