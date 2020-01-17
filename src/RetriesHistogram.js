@@ -23,7 +23,7 @@ export default class RetriesHistogram extends Component {
       width = Math.round(containerRect.width - margin.left - margin.right)
     }
     const activesHeight = 72
-    const actualYMax = yMax || d3.max(actives, d => d.value)
+    const actualYMax = yMax || d3.max(actives, d => d.value) || 1
     const yActives = d3.scaleLinear().domain([actualYMax, 0]).range([0, activesHeight])
     const completesHeight = activesHeight - yActives(d3.max(completes, d => d.value))
     const yCompletes = d3.scaleLinear().domain([d3.max(completes, d => d.value), 0]).range([0, completesHeight])
