@@ -14,7 +14,7 @@ export default class RetriesHistogram extends Component {
   }
 
   calculateSize() {
-    const {quota, timewindows, actives, completes} = this.props
+    const {yMax, timewindows, actives, completes} = this.props
     const flow = this.props.flow.map(step => ({...step, delay:Math.ceil(step.delay)}))
     let width = 1
     const { container } = this.refs
@@ -23,7 +23,8 @@ export default class RetriesHistogram extends Component {
       width = Math.round(containerRect.width - margin.left - margin.right)
     }
     const activesHeight = 72
-    const yActives = d3.scaleLinear().domain([Math.max(quota / d3.sum(flow, step => step.type === "discard"? 0 : 1), d3.max(actives, d => d.value)), 0]).range([0, activesHeight])
+    const actualYMax = yMax || d3.max(actives, d => d.value)
+    const yActives = d3.scaleLinear().domain([actualYMax, 0]).range([0, activesHeight])
     const completesHeight = activesHeight - yActives(d3.max(completes, d => d.value))
     const yCompletes = d3.scaleLinear().domain([d3.max(completes, d => d.value), 0]).range([0, completesHeight])
     const x = d3.scaleBand().domain(d3.range(0, d3.sum(flow, step => step.delay)+1, 1)).rangeRound([0, width]).padding(0.1)
