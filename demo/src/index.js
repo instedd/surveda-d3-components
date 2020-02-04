@@ -204,6 +204,12 @@ class Demo extends Component {
       }
     })
 
+    const completed = completes.map(complete => complete.value).reduce((total, completed) => total + completed)
+    const progress = completed / quota
+    const needed = Math.round((quota - completed) * (1/successRate))
+    const additionalRespondents = needed - pending
+    const additionalCompletes = Math.round(quota * (1 - progress))
+
     return (
       <div className="app">
         <div className="header">
@@ -239,10 +245,9 @@ class Demo extends Component {
               <div className="title">Queue size</div>
               <div className="description">Amount of respondents that are estimated we need to contact to reach the target completes.<br/>It increases when the success rate decreases and viceversa.</div>
             </div>
-            <QueueSize completes={quota-pending} pending={pending} needed={pending*Math.ceil(1/successRate)} missing={0} successRate={successRate} multiplier={Math.ceil(1/successRate)} weight={24}/>
+            <QueueSize exhausted={quota-pending} available={pending} needed={needed} additionalRespondents={additionalRespondents > 0 ? additionalRespondents : null} additionalCompletes={additionalCompletes > 0 ? additionalCompletes : null} weight={24}/>
           </div>
         </div>
-        }
       </div>
     );
   }

@@ -57,17 +57,18 @@ export default class QueueSize extends Component {
   }
 
   render() {
-    const {completes, pending, needed, missing, successRate, multiplier, weight} = this.props
+    const toKilo = num => num > 999 ? (num/1000).toFixed(1) + 'K' : num
+    const {exhausted, available, needed, additionalCompletes, additionalRespondents, weight} = this.props
     const width = Math.max(this.state.width - margin.left - margin.right, 0)
     const height = Math.max(this.state.height - margin.top - margin.bottom, 0)
-    const scale = Math.min(1, width/needed, width/(completes+pending)/2)
+    const scale = Math.min(1, width/needed, width/(exhausted+available)/2)
     const offset = 12
     const corner = 6
-    const left = {  x1: (completes-pending)*scale/2,
+    const left = {  x1: (exhausted-available)*scale/2,
                     y1: weight,
                     x2: -needed*scale/2,
                     y2: height-weight}
-    const right = { x1: (completes+pending)*scale/2,
+    const right = { x1: (exhausted+available)*scale/2,
                     y1: weight,
                     x2: needed*scale/2,
                     y2: height-weight}
@@ -77,23 +78,23 @@ export default class QueueSize extends Component {
         <svg className="queueSize" width={width+margin.left+margin.right} height={height+margin.top+margin.bottom}>
           <g transform={`translate(${margin.top}, ${margin.left})`}>
             <g transform={`translate(${width/2},0)`}>
-                <g transform={`translate(${-(pending+completes)*scale/2},0)`}>
-                  <rect width={completes*scale} height={weight} className="queueProgress"/>
-                  <rect width={pending*scale} height={weight} x={completes*scale} className="background"/>
-                  <text x={-offset} y={weight/2} className="queueProgress label end">{completes} Exhausted</text>
-                  <text x={(pending+completes)*scale+offset} y={weight/2} className="background label start">{pending} Pending</text>
+                <g transform={`translate(${-(available+exhausted)*scale/2},0)`}>
+                  <rect width={exhausted*scale} height={weight} className="queueProgress"/>
+                  <rect width={available*scale} height={weight} x={exhausted*scale} className="background"/>
+                  <text x={-offset} y={weight/2} className="queueProgress label end">{toKilo(exhausted)} exhausted</text>
+                  <text x={(available+exhausted)*scale+offset} y={weight/2} className="background label start">{toKilo(available)} available</text>
                 </g>
                 <path style={{display:needed? "auto":"none"}} className="dottedLine" d={this.connector(left.x1, left.y1, left.x2, left.y2, weight-(left.x1 > left.x2 && right.x1 > right.x2?corner:0), corner)}/>
                 <path style={{display:needed? "auto":"none"}} className="dottedLine" d={this.connector(right.x1, right.y1, right.x2, right.y2, weight, corner)}/>
                 <g ref="content">
-                  <text className="needed">{`${d3.format(",")(needed)} needed to complete target`}</text>
-                  <text className="multiplier" y={18}>{`×${multiplier} (1/${d3.format(".3f")(successRate)} Estimated success rate`})</text>
-                  {missing? <text className="missing" y={54} ><tspan className="icon">warning</tspan> {`${d3.format(",")(missing)} missing`}</text> : null}
+                  <text className="needed">{`${toKilo(needed)} respondents needed`}</text>
+                  <text className="multiplier" y={18}>{`to have ${additionalCompletes ? toKilo(additionalCompletes) : 0} additional completes`}</text>
+                  {additionalRespondents? <text className="missing" y={54} ><tspan className="icon">warning</tspan> {`Add ${toKilo(additionalRespondents)} additional respondents`}</text> : null}
                 </g>
             </g>
             <g transform={`translate(0,${height-weight})`}>
                 <rect width={needed*scale} height={weight} x={(width-needed*scale)/2}/>
-                {missing? <rect className="missing" width={missing*scale} height={weight} x={(width-missing*scale) - (width-needed*scale)/2} />:null}
+                {additionalRespondents? <rect className="missing" width={additionalRespondents*scale} height={weight} x={(width-additionalRespondents*scale) - (width-needed*scale)/2} />:null}
             </g>
           </g>
         </svg>
