@@ -186,7 +186,7 @@ class Demo extends Component {
   }
 
   render() {
-    const {actives, completes, pending, successRate, initial, actual, quota, stats, position, duration, width, height, forecasts, flow} = this.state
+    const {actives, completes, pending: available, successRate, initial, actual, quota: target, stats, position, duration, width, height, forecasts, flow} = this.state
     const time = new Date(2017, 8, 22, 6+position)
     const hours = position >= duration? 24-position : duration-position
     const timewindows = actives.map(slot => false)
@@ -203,6 +203,12 @@ class Demo extends Component {
         timewindows[i] = step.type === "discard" || j % 24 < duration
       }
     })
+
+    const completed = completes.map(complete => complete.value).reduce((total, completed) => total + completed)
+    const progress = completed / target
+    const additionalCompletes = target - completed
+    const neededToComplete = Math.round((additionalCompletes / successRate))
+    const additionalRespondents = neededToComplete - available
 
     return (
       <div className="app">
@@ -232,17 +238,16 @@ class Demo extends Component {
               <div className="title">Success rate</div>
               <div className="description">Estimated by combining initial and current values</div>
             </div>
-            <SuccessRate initial={initial} actual={actual} estimated={successRate} progress={(quota-pending)/quota} weight={24}/>
+            <SuccessRate initial={initial} actual={actual} estimated={successRate} progress={progress} weight={24}/>
           </div>
           <div>
             <div className="header">
               <div className="title">Queue size</div>
               <div className="description">Amount of respondents that are estimated we need to contact to reach the target completes.<br/>It increases when the success rate decreases and viceversa.</div>
             </div>
-            <QueueSize completes={quota-pending} pending={pending} needed={pending*Math.ceil(1/successRate)} missing={0} successRate={successRate} multiplier={Math.ceil(1/successRate)} weight={24}/>
+            <QueueSize exhausted={target-available} available={available} needed={neededToComplete} additionalRespondents={additionalRespondents > 0 ? additionalRespondents : null} additionalCompletes={additionalCompletes} weight={24}/>
           </div>
         </div>
-        }
       </div>
     );
   }
