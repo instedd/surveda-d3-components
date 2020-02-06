@@ -209,6 +209,7 @@ class Demo extends Component {
     const additionalCompletes = target - completed
     const neededToComplete = Math.round((additionalCompletes / successRate))
     const additionalRespondents = neededToComplete - available
+    const exhausted = target - available
 
     return (
       <div className="app">
@@ -238,14 +239,14 @@ class Demo extends Component {
               <div className="title">Success rate</div>
               <div className="description">Estimated by combining initial and current values</div>
             </div>
-            <SuccessRate initial={initial} actual={actual} estimated={successRate} progress={progress} weight={24}/>
+            <SuccessRate initial={initial} actual={actual} estimated={successRate} progress={progress} exhausted={exhausted} weight={24}/>
           </div>
           <div>
             <div className="header">
               <div className="title">Queue size</div>
               <div className="description">Amount of respondents that are estimated we need to contact to reach the target completes.<br/>It increases when the success rate decreases and viceversa.</div>
             </div>
-            <QueueSize exhausted={target-available} available={available} needed={neededToComplete} additionalRespondents={additionalRespondents > 0 ? additionalRespondents : null} additionalCompletes={additionalCompletes} weight={24}/>
+            <QueueSize exhausted={exhausted} available={available} needed={neededToComplete} additionalRespondents={additionalRespondents > 0 ? additionalRespondents : null} additionalCompletes={additionalCompletes} weight={24}/>
           </div>
         </div>
       </div>

@@ -320,6 +320,10 @@
   fill: #ff5621;
 }
 
+.successRate .actual.zero-exhausted {
+  fill: #ccc;
+}
+
 .successRate .progress {
   fill: #4caf50;
 }

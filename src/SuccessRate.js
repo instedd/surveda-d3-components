@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
 import { Donut } from '.'
+import classNames from 'classnames'
 
 const margin = {left:18, top:18, right:18, bottom:18}
 
@@ -42,7 +43,8 @@ export default class SuccessRate extends Component {
   }
 
   render() {
-    const {progress, weight, initial, actual, estimated} = this.props
+    const {progress, weight, initial, actual, estimated, exhausted} = this.props
+    const zeroExhausted = exhausted == 0
     const width = this.state.width - margin.left - margin.right
     const height = this.state.height - margin.top - margin.bottom
     const arcRadius = Math.min(width/2, height)
@@ -85,8 +87,8 @@ export default class SuccessRate extends Component {
             </g>
             <g ref="actual" transform={`translate(${(arcRadius*3+donutRadius-weight)/2-donutRadius/2},${arcRadius-donutRadius-margin.bottom})`}>
                 <Donut value={actual} width={donutRadius} height={donutRadius} color="actual" weight="12" />
-                <text x={donutRadius/2} y={donutRadius + margin.bottom} className="actual label">Actual success rate</text>
-                <text x={donutRadius/2} y={donutRadius/2} className="actual percent middle">{this.numberFormat(actual)}</text>
+                <text x={donutRadius/2} y={donutRadius + margin.bottom} className={classNames("actual label", { "zero-exhausted": zeroExhausted })}>Actual success rate</text>
+                <text x={donutRadius/2} y={donutRadius/2} className={classNames("actual percent middle", { "zero-exhausted": zeroExhausted })}>{this.numberFormat(actual)}</text>
             </g>
           </g>
         </svg>
