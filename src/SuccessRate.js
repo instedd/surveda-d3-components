@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
 import { Donut } from '.'
-var classNames = require('classnames')
+import classNames from 'classnames'
 
 const margin = {left:18, top:18, right:18, bottom:18}
 

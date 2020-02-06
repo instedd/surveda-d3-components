@@ -209,7 +209,7 @@ class Demo extends Component {
     const additionalCompletes = target - completed
     const neededToComplete = Math.round((additionalCompletes / successRate))
     const additionalRespondents = neededToComplete - available
-    const exhausted = target-available
+    const exhausted = target - available
 
     return (
       <div className="app">
