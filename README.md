@@ -1,3 +1,8 @@
+## ⚠️  This repo is readonly and its component have been embedded in [instedd/surveda](https://github.com/instedd/surveda) ⚠️
+Ref: [instedd/surrveda#1827](https://github.com/instedd/surveda/pull/1827)
+
+---
+
 # surveda-d3-components
 
 ## Install
